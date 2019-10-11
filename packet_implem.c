@@ -106,28 +106,80 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
 }
 
 pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
-{
-    /* Your code will be inserted here */
+{   if (len == 0){
+      return E_NOMEM;
+      }
+    int index = 0;
+    ptypes_t type_retrieve;
+    type_retrieve = pkt_get_type(pkt);
+    uint8_t type;
+    if (type_retrieve == 1){
+      type = 1;
+    }
+    if (type_retrieve == 2){
+      type = 2;
+    }
+    if (type_retrieve == 3){
+      type = 3;
+    }
+    uint8_t tr = pkt_get_tr(pkt);
+    uint8_t window = pkt_get_window(pkt);
+    uint8_t first8;
+    first8 = (type << 6);
+    first8 = first8 + (tr << 5);
+    first8 = first8 + window;
+    *buf = (char) first8;
+    index += 1;
+    uint16_t length = pkt_get_length(pkt);
+    ssize_t l = varuint_predict_len(length);
+    uint8_t * var_uint = (uint8_t *) malloc(l);
+    if (var_uint == NULL){
+      return E_NOMEM;
+    }
+    ssize_t err = varuint_encode(length, var_uint, l);
+    if (err == -1){
+      free(var_uint);
+      return E_LENGTH;
+    }
+    *(buf + index) = (char) var_uint[0];
+    if (err == 1){
+      index += 1;
+    }
+    if (err == 2){
+      index += 2;
+    }
+    if (index >= len){
+      return E_NOMEM;
+    }
+    uint8_t seqnum = pkt_get_seqnum(pkt);
+    *(buf + index) = (char) seqnum;
+    index += 1;
+    if (index >= len){
+      return E_NOMEM;
+    }
+    
+
+
 }
 
 ptypes_t pkt_get_type  (const pkt_t* pkt)
 {
-    /* Your code will be inserted here */
+    return pkt->type;
 }
 
 uint8_t  pkt_get_tr(const pkt_t* pkt)
 {
-    /* Your code will be inserted here */
+    return pkt->tr;
 }
 
 uint8_t  pkt_get_window(const pkt_t* pkt)
 {
-    /* Your code will be inserted here */
+    return pkt->window;
 }
 
 uint8_t  pkt_get_seqnum(const pkt_t* pkt)
 {
-    /* Your code will be inserted here */
+    return pkt->seqnum;
 }
 
 uint16_t pkt_get_length(const pkt_t* pkt)
