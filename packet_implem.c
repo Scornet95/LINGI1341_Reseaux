@@ -49,59 +49,76 @@ void pkt_del(pkt_t *pkt)
 
 pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
 {
-    uint8_t* first8 = data;
-    ptypes_t type = *first8 >> 6;
-    if(type == 0){
+    pkt = pkt_new();
+    int index = 0;
+    pkt->type = data[index] >> 6;
+    if(pkt->type != 1 && pkt->type != 2 && pkt->type != 3){
         pkt_del(pkt);
         return E_TYPE;
     }
-    pkt->type = type;
-    pkt->tr = (*first8 << 2) >> 7;
-    if(pkt->tr == 1 && pkt->type != 1){
+    pkt->tr = (data[index] << 2) >> 7;
+    if(pkt->tr == 1 && pkt->type != PTYPE_DATA){
         pkt_del(pkt);
         return E_TR;
     }
+    pkt->window = (data[index] << 3) >> 3;
+    if(varuint_decode((data + 1), (ssize_t) 2, &(pkt->length)) == 1){
+        pkt->l = 0;
+        index = index + 2;
+    }
+    else{
+        pkt->l = 1;
+        index = index + 3;
+    }
+    pkt->seqnum = (uint8_t) data[index]; //test pour la window à faire mais je ne sais pas comment.
+    index++;
 
-    pkt->window = (*first8 << 3) >> 3;
-    uint8_t* second8 = data + 1;
-    pkt->l = *second8 >> 7;
-    uint8_t* seqnum;
-    if(pkt->l == 0){
-        pkt->length = *second8;
-        seqnum = second8 + 1;
-        pkt->seqnum = *seqnum;
+    uint32_t timestamp = 0;
+    for(int i = 0; i < 4; i++){
+        timestamp += data[index];
+        timestamp = timestamp << 8;
+        index++;
     }
-    else{
-        uint16_t* second16 = second8;
-        pkt->length = ntohs((*second16 << 1) >> 1);
-        if(pkt->length > 512){
-            pkt_del(pkt);
-            return E_LENGTH;
-        }
-        seqnum = second8 + 2;
-        pkt->seqnum = *seqnum;
+    pkt->timestamp = timestamp;
+
+    uint32_t crc1 = 0;
+    for(int i = 0; i < 4; i++){
+        crc1 += data[index];
+        crc1 = crc1 << 8;
+        index++;
     }
-    int* timestamp = seqnum + 1;
-    pkt->timestamp = *timestamp;
-    int* crc1 = timestamp + 1;
-    pkt->crc1 = ntohs(*crc1);
-    //On recalcule le crc sur le header et on compare avec celui que l'on a reçu.
-    unsigned long long *header = data;
-    unsigned long long header2 = *header & 0b1101111111111111111111111111111111111111111111111111111111111111;
-    //Petit and logique pour passer le champ tr à 0
-    if(pkt->l == 0){
-        uLong crc = crc32(0L, &header2, 7);
-        if(crc != pkt->crc1){
+    pkt->crc1 = ntohl(crc1);
+    //Mtn on va recalculer le crc du header et le comparer avec celui reçu.
+    uLong crc = crc32(0L, Z_NULL, 0);
+    char* buf = malloc(sizeof(char));
+    memcpy(buf, data, 1);
+    *buf = *buf & 223;
+    crc = crc32(crc, buf, 1);
+    free(buf);
+    int headLength = predict_header_length(pkt);
+    if(pkt->tr == 1){
+        if(len != headLength + 4){ // le header + le crc1
             pkt_del(pkt);
-            return E_CRC;
+            return E_UNCONSISTENT;
         }
     }
     else{
-        uLong crc = crc32(0L, &header2, 8);
-        if(crc != pkt->crc1){
+        if(len != headLength + 8 + pkt->length){ // le header + les deux crc + la taille du payload.
             pkt_del(pkt);
-            return E_CRC;
+            return E_UNCONSISTENT;
         }
+    }
+    for(int i = 1; i < headLength, i++){
+        crc = crc32(crc, data + i, 1);
+    }
+    if(crc != pkt->crc1){
+        pkt_del(pkt);
+        return E_CRC;
+    }
+    //On décode le payload 4 bytes à la fois
+    uint32_t
+    for(int i = 0; i < pkt->length; i++){
+
     }
 }
 
@@ -157,7 +174,7 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     if (index >= len){
       return E_NOMEM;
     }
-    
+
 
 
 }
