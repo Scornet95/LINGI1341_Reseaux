@@ -4,6 +4,8 @@
 /* Extra #includes */
 /* Your code will be inserted here */
 #include <zlib.h>
+#include <arpa/inet.h>
+#include <string.h>
 
 int main(void){
     pkt_t* packet = pkt_new();
@@ -105,7 +107,7 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
             return E_UNCONSISTENT;
         }
     }
-    for(int i = 1; i < headLength, i++){
+    for(int i = 1; i < headLength; i++){
         crc = crc32(crc, data + i, 1);
     }
     if(crc != pkt->crc1){
@@ -143,7 +145,7 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     crc = crc32(0L, Z_NULL, 0);
     index = index - 4 - pkt->length;
     for(int i = index; i < index + pkt->length; i++){
-        crc = crc32(crc, data + i; 1);
+        crc = crc32(crc, data + i, 1);
     }
     if(crc != pkt->crc2){
         pkt_del(pkt);
@@ -196,13 +198,13 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     if (err == 2){
       index += 2;
     }
-    if (index >= len){
+    if (index >= *len){
       return E_NOMEM;
     }
     uint8_t seqnum = pkt_get_seqnum(pkt);
     *(buf + index) = (char) seqnum;
     index += 1;
-    if (index >= len){
+    if (index >= *len){
       return E_NOMEM;
     }
     uint32_t timestamp = pkt_get_timestamp(pkt);
@@ -214,13 +216,13 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     for (int i = 0; i < 4; i++){
       *(buf + index) = (char) timestamp_8bit[i];
       index += 1;
-      if (index >= len){
+      if (index >= *len){
         free(timestamp_8bit);
         return E_NOMEM;
       }
     }
     free(timestamp_8bit);
-    
+
 
 
 
