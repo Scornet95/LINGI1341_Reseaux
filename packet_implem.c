@@ -174,6 +174,24 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     if (index >= len){
       return E_NOMEM;
     }
+    uint32_t timestamp = pkt_get_timestamp(pkt);
+    uint8_t * timestamp_8bit = (uint8_t *) malloc(4);
+    timestamp_8bit[0] = timestamp >> 24;
+    timestamp_8bit[1] = (timestamp >> 16) & 0x000000ff;
+    timestamp_8bit[2] = (timestamp >> 8) & 0x000000ff;
+    timestamp_8bit[3] = (timestamp & 0x000000ff);
+    for (int i = 0; i < 4; i++){
+      *(buf + index) = (char) timestamp_8bit[i];
+      index += 1;
+      if (index >= len){
+        free(timestamp_8bit);
+        return E_NOMEM;
+      }
+    }
+    free(timestamp_8bit);
+    
+
+
 
 
 
@@ -201,12 +219,12 @@ uint8_t  pkt_get_seqnum(const pkt_t* pkt)
 
 uint16_t pkt_get_length(const pkt_t* pkt)
 {
-    /* Your code will be inserted here */
+    return pkt->length;
 }
 
 uint32_t pkt_get_timestamp   (const pkt_t* pkt)
 {
-    /* Your code will be inserted here */
+    return pkt->timestamp;
 }
 
 uint32_t pkt_get_crc1   (const pkt_t* pkt)
