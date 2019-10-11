@@ -22,7 +22,7 @@ struct __attribute__((__packed__)) pkt {
     uint32_t timestamp;
     uint32_t crc1;
     uint32_t crc2;
-    void* payload;
+    char* payload;
 };
 
 
@@ -33,9 +33,6 @@ pkt_t* pkt_new()
 {
     pkt_t* toRet = malloc(sizeof(pkt_t));
     if(toRet == NULL)
-        return NULL;
-    toRet->payload = malloc(sizeof(char) * 512);
-    if(toRet->payload == NULL)
         return NULL;
     return toRet;
 
@@ -115,11 +112,45 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
         pkt_del(pkt);
         return E_CRC;
     }
-    //On décode le payload 4 bytes à la fois
-    uint32_t
-    for(int i = 0; i < pkt->length; i++){
-
+    if(pkt->type == PTYPE_ACK)
+        return PKT_OK;
+    if(pkt->tr == 0 && index == len){
+        return PKT_OK;
     }
+    else if(pkt->tr == 0 && index != len){
+        pkt_del(pkt);
+        return E_UNCONSISTENT;
+    }
+    char* payload = malloc(sizeof(char) * pkt->length);
+    if(payload == NULL)
+        return -1;
+    for(int i = 0; i < pkt->length; i++, index++){
+        payload[i] = data[index];
+    }
+    if(pkt_set_payload(pkt, payload, pkt->length) != PKT_OK){
+        pkt_del(pkt);
+        return -1;
+    }
+    free(payload);
+    //Mtn on va calculer le crc2 du paquet, on sait que c'est un paquet de type data
+    uint32_t crc2 = 0;
+    for(int i = 0; i < 4; i++){
+        crc2 += data[index];
+        crc2 = crc2 << 8;
+        index++;
+    }
+    pkt->crc2 = ntohl(crc2);
+    crc = crc32(0L, Z_NULL, 0);
+    index = index - 4 - pkt->length;
+    for(int i = index; i < index + pkt->length; i++){
+        crc = crc32(crc, data + i; 1);
+    }
+    if(crc != pkt->crc2){
+        pkt_del(pkt);
+        return E_CRC;
+    }
+    else
+        return PKT_OK;
 }
 
 pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
@@ -287,7 +318,11 @@ pkt_status_code pkt_set_payload(pkt_t *pkt,
                                 const char *data,
                                 const uint16_t length)
 {
-    /* Your code will be inserted here */
+    pkt->payload = malloc(sizeof(char) * length);
+    if(pkt->payload == NULL)
+        E_NOMEM;
+    memcpy(pkt->payload, data, length);
+    return PKT_OK;
 }
 
 
