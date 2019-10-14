@@ -7,13 +7,6 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-int main(void){
-    pkt_t* packet = pkt_new();
-    printf("size of the packet : %ld\n", sizeof(packet));
-    pkt_del(packet);
-}
-
-
 struct __attribute__((__packed__)) pkt {
     ptypes_t type;
     uint8_t tr;
@@ -50,18 +43,18 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
 {
     pkt = pkt_new();
     int index = 0;
-    pkt->type = data[index] >> 6;
+    pkt_set_type(pkt, data[index] >> 6);
     if(pkt->type != 1 && pkt->type != 2 && pkt->type != 3){
         pkt_del(pkt);
         return E_TYPE;
     }
-    pkt->tr = (data[index] << 2) >> 7;
+    pkt_set_tr(pkt, (data[index] << 2) >> 7);
     if(pkt->tr == 1 && pkt->type != PTYPE_DATA){
         pkt_del(pkt);
         return E_TR;
     }
-    pkt->window = (data[index] << 3) >> 3;
-    if(varuint_decode((data + 1), (ssize_t) 2, &(pkt->length)) == 1){
+    pkt_set_window(pkt, (data[index] << 3) >> 3);
+    if(varuint_decode((uint8_t*)(data + 1), (ssize_t) 2, &(pkt->length)) == 1){
         pkt->l = 0;
         index = index + 2;
     }
@@ -73,7 +66,8 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     index++;
 
     uint32_t timestamp = 0;
-    for(int i = 0; i < 4; i++){
+    int i;
+    for(i = 0; i < 4; i++){
         timestamp += data[index];
         timestamp = timestamp << 8;
         index++;
@@ -81,7 +75,7 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     pkt->timestamp = timestamp;
 
     uint32_t crc1 = 0;
-    for(int i = 0; i < 4; i++){
+    for(i = 0; i < 4; i++){
         crc1 += data[index];
         crc1 = crc1 << 8;
         index++;
@@ -92,23 +86,23 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     char* buf = malloc(sizeof(char));
     memcpy(buf, data, 1);
     *buf = *buf & 223;
-    crc = crc32(crc, buf, 1);
+    crc = crc32(crc, (Bytef*) buf, 1);
     free(buf);
-    int headLength = predict_header_length(pkt);
+    size_t headLength = predict_header_length(pkt);
     if(pkt->tr == 1){
-        if(len != headLength + 4){ // le header + le crc1
+        if(len != headLength + (ssize_t) 4){ // le header + le crc1
             pkt_del(pkt);
             return E_UNCONSISTENT;
         }
     }
     else{
-        if(len != headLength + 8 + pkt->length){ // le header + les deux crc + la taille du payload.
+        if(len != headLength + (ssize_t) 8 + (ssize_t) pkt->length){ // le header + les deux crc + la taille du payload.
             pkt_del(pkt);
             return E_UNCONSISTENT;
         }
     }
-    for(int i = 1; i < headLength; i++){
-        crc = crc32(crc, data + i, 1);
+    for(i = 1; i < (int) headLength; i++){
+        crc = crc32(crc,(Bytef*) data + i, 1);
     }
     if(crc != pkt->crc1){
         pkt_del(pkt);
@@ -116,17 +110,17 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     }
     if(pkt->type == PTYPE_ACK)
         return PKT_OK;
-    if(pkt->tr == 0 && index == len){
+    if(pkt->tr == 0 && index == (int) len){
         return PKT_OK;
     }
-    else if(pkt->tr == 0 && index != len){
+    else if(pkt->tr == 0 && index != (int) len){
         pkt_del(pkt);
         return E_UNCONSISTENT;
     }
     char* payload = malloc(sizeof(char) * pkt->length);
     if(payload == NULL)
         return -1;
-    for(int i = 0; i < pkt->length; i++, index++){
+    for(i = 0; i < pkt->length; i++, index++){
         payload[i] = data[index];
     }
     if(pkt_set_payload(pkt, payload, pkt->length) != PKT_OK){
@@ -136,7 +130,7 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     free(payload);
     //Mtn on va calculer le crc2 du paquet, on sait que c'est un paquet de type data
     uint32_t crc2 = 0;
-    for(int i = 0; i < 4; i++){
+    for(i = 0; i < 4; i++){
         crc2 += data[index];
         crc2 = crc2 << 8;
         index++;
@@ -144,8 +138,8 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     pkt->crc2 = ntohl(crc2);
     crc = crc32(0L, Z_NULL, 0);
     index = index - 4 - pkt->length;
-    for(int i = index; i < index + pkt->length; i++){
-        crc = crc32(crc, data + i, 1);
+    for(i = index; i < index + pkt->length; i++){
+        crc = crc32(crc, (Bytef*) data + i, 1);
     }
     if(crc != pkt->crc2){
         pkt_del(pkt);
@@ -154,7 +148,6 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     else
         return PKT_OK;
 }
-
 pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
 {   if (len == 0){
       return E_NOMEM;
@@ -219,8 +212,8 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     timestamp_8bit[1] = (timestamp >> 16) & 0x000000ff;
     timestamp_8bit[2] = (timestamp >> 8) & 0x000000ff;
     timestamp_8bit[3] = (timestamp & 0x000000ff);
-    int i = 0;
-    for (i; i < 4; i+=1){
+    int i;
+    for (i = 0; i < 4; i+=1){
       *(buf + index) = (char) timestamp_8bit[i];
       index += 1;
       if (index >= (int) *len){
@@ -236,8 +229,8 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     *tr_to_0 = *tr_to_0 & 223;
     crc_1 = crc32(crc_1, (const Bytef *) tr_to_0, 1);
     ssize_t headLength = predict_header_length(pkt);
-    int j = 1;
-    for (j; j < headLength; j+=1){
+    int j;
+    for (j = 1; j < headLength; j+=1){
       crc_1 = crc32(crc_1, (const Bytef *) buf + j, 1);
     }
     uint8_t * crc = (uint8_t *) malloc(4);
@@ -245,8 +238,8 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     crc[1] = (crc_1 >> 8) & 0x000000ff;
     crc[2] = (crc_1 >> 16) & 0x000000ff;
     crc[3] = crc_1 >> 24;
-    int v = 0;
-    for (v; v < 4; v+=1){
+    int v;
+    for (v = 0; v < 4; v+=1){
       *(buf + index) = (char) crc[v];
       index += 1;
       if (index >= (int) *len){
@@ -259,8 +252,8 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     //Payload in the buffer
     if (type == 1){
         const char * payload = pkt_get_payload(pkt);
-        int k = 0;
-        for(k; k < length; k+=1){
+        int k;
+        for(k = 0; k < length; k+=1){
           *(buf + index) = payload[k];
           index += 1;
           if(index >= (int) *len){
@@ -274,16 +267,16 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
 
     //Calcule du crc2
     uint32_t crc_2 = crc32(0L,Z_NULL,0);
-    for(index_calcul_crc2; index_calcul_crc2 < length; index_calcul_crc2+=1){
-      crc_2 = crc32(crc_2,buf+index_calcul_crc2,1);
+    for( ; index_calcul_crc2 < length; index_calcul_crc2+=1){
+      crc_2 = crc32(crc_2, (Bytef*) (buf+index_calcul_crc2),1);
     }
     uint8_t* crc_2_final = (uint8_t *) malloc(sizeof(uint8_t)*2);
     crc_2_final[0] = (crc_2) & 0x000000ff;
     crc_2_final[1] = (crc_2 >> 8) & 0x000000ff;
     crc_2_final[2] = (crc_2 >> 16) & 0x000000ff;
     crc_2_final[3] = crc_2 >> 24;
-    int o = 0;
-    for (o; o < 4; o+=1){
+    int o;
+    for (o = 0; o < 4; o+=1){
       *(buf + index) = (char) crc_2_final[o];
       index += 1;
       if (index >= (int) *len){
@@ -395,7 +388,7 @@ pkt_status_code pkt_set_payload(pkt_t *pkt,
 {
     pkt->payload = malloc(sizeof(char) * length);
     if(pkt->payload == NULL)
-        E_NOMEM;
+        return E_NOMEM;
     memcpy(pkt->payload, data, length);
     return PKT_OK;
 }
