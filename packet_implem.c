@@ -11,7 +11,6 @@ struct __attribute__((__packed__)) pkt {
     ptypes_t type;
     uint8_t tr;
     uint8_t window;
-    uint8_t l;
     uint16_t length;
     uint8_t seqnum;
     uint32_t timestamp;
@@ -55,11 +54,9 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     }
     pkt_set_window(pkt, (data[index] << 3) >> 3);
     if(varuint_decode((uint8_t*)(data + 1), (ssize_t) 2, &(pkt->length)) == 1){
-        pkt->l = 0;
         index = index + 2;
     }
     else{
-        pkt->l = 1;
         index = index + 3;
     }
     pkt->seqnum = (uint8_t) data[index]; //test pour la window à faire mais je ne sais pas comment.
@@ -398,18 +395,17 @@ ssize_t varuint_decode(const uint8_t *data, const size_t len, uint16_t *retval)
 {
     if(len != 1 && len != 2)
         return -1;
-    if((*data >> 7) == 0){
-        *retval = *data;
+    if(varuint_len(data) == 1){
+        *retval = (uint16_t) *data;
         return 1;
     }
     else{
-        if(len < 2)
-            return -1;
-        *retval = ntohs((*data << 1) >> 1);
+        *retval = (*data & 127) << 8;
+        *retval += *(data + 1);
+        *retval = ntohs(*retval);
         return 2;
     }
 }
-
 
 ssize_t varuint_encode(uint16_t val, uint8_t *data, const size_t len)
 {
