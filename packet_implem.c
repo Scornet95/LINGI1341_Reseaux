@@ -197,20 +197,20 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     }
     if (err == 2){
       index += 1;
-      if (index >= *len){
+      if (index >= (int) *len){
         return E_NOMEM;
       }
       *(buf + index) = (char) var_uint[1];
       index += 1;
 
     }
-    if (index >= *len){
+    if (index >= (int) *len){
       return E_NOMEM;
     }
     uint8_t seqnum = pkt_get_seqnum(pkt);
     *(buf + index) = (char) seqnum;
     index += 1;
-    if (index >= *len){
+    if (index >= (int) *len){
       return E_NOMEM;
     }
     uint32_t timestamp = pkt_get_timestamp(pkt);
@@ -220,10 +220,10 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     timestamp_8bit[2] = (timestamp >> 8) & 0x000000ff;
     timestamp_8bit[3] = (timestamp & 0x000000ff);
     int i = 0;
-    for (i; i < 4; i++){
+    for (i; i < 4; i+=1){
       *(buf + index) = (char) timestamp_8bit[i];
       index += 1;
-      if (index >= *len){
+      if (index >= (int) *len){
         free(timestamp_8bit);
         return E_NOMEM;
       }
@@ -234,22 +234,22 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     char* tr_to_0 = (char *) malloc(sizeof(char));
     memcpy(tr_to_0,buf,1);
     *tr_to_0 = *tr_to_0 & 223;
-    crc_1 = crc32(crc_1, tr_to_0, 1);
+    crc_1 = crc32(crc_1, (const Bytef *) tr_to_0, 1);
     ssize_t headLength = predict_header_length(pkt);
     int j = 1;
-    for (j; j < headLength; j++){
-      crc_1 = crc32(crc_1, buf + j, 1);
+    for (j; j < headLength; j+=1){
+      crc_1 = crc32(crc_1, (const Bytef *) buf + j, 1);
     }
     uint8_t * crc = (uint8_t *) malloc(4);
-    crc[0] = (crc_1_nbo) & 0x000000ff;
-    crc[1] = (crc_1_nbo >> 8) & 0x000000ff;
-    crc[2] = (crc_1_nbo >> 16) & 0x000000ff;
-    crc[3] = crc_1_nbo >> 24;
+    crc[0] = crc_1 & 0x000000ff;
+    crc[1] = (crc_1 >> 8) & 0x000000ff;
+    crc[2] = (crc_1 >> 16) & 0x000000ff;
+    crc[3] = crc_1 >> 24;
     int v = 0;
-    for (v; v < 4; v++){
+    for (v; v < 4; v+=1){
       *(buf + index) = (char) crc[v];
       index += 1;
-      if (index >= *len){
+      if (index >= (int) *len){
         free(crc);
         return E_NOMEM;
       }
@@ -259,10 +259,11 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     //Payload in the buffer
     if (type == 1){
         const char * payload = pkt_get_payload(pkt);
-        for(int k = 0; k < length; 1){
+        int k = 0;
+        for(k; k < length; k+=1){
           *(buf + index) = payload[k];
           index += 1;
-          if(index >= len){
+          if(index >= (int) *len){
             return E_NOMEM;
           }
         }
@@ -273,19 +274,19 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
 
     //Calcule du crc2
     uint32_t crc_2 = crc32(0L,Z_NULL,0);
-    for(index_calcul_crc2; index_calcul_crc2 < length; index_calcul_crc2++){
-      crc2 = crc32(crc2,buf+index_calcul_crc2,1);
+    for(index_calcul_crc2; index_calcul_crc2 < length; index_calcul_crc2+=1){
+      crc_2 = crc32(crc_2,buf+index_calcul_crc2,1);
     }
     uint8_t* crc_2_final = (uint8_t *) malloc(sizeof(uint8_t)*2);
-    crc_2_final[0] = (crc2_nbo) & 0x000000ff;
-    crc_2_final[1] = (crc2_nbo >> 8) & 0x000000ff;
-    crc_2_final[2] = (crc2_nbo >> 16) & 0x000000ff;
-    crc_2_final[3] = crc2_nbo >> 24;
+    crc_2_final[0] = (crc_2) & 0x000000ff;
+    crc_2_final[1] = (crc_2 >> 8) & 0x000000ff;
+    crc_2_final[2] = (crc_2 >> 16) & 0x000000ff;
+    crc_2_final[3] = crc_2 >> 24;
     int o = 0;
-    for (o; o < 4; o++){
+    for (o; o < 4; o+=1){
       *(buf + index) = (char) crc_2_final[o];
       index += 1;
-      if (index >= *len){
+      if (index >= (int) *len){
         free(crc_2_final);
         return E_NOMEM;
       }
@@ -331,7 +332,7 @@ uint32_t pkt_get_crc1   (const pkt_t* pkt)
 
 uint32_t pkt_get_crc2   (const pkt_t* pkt)
 {
-    /* Your code will be inserted here */
+    return pkt->crc2;
 }
 
 const char* pkt_get_payload(const pkt_t* pkt)
@@ -342,42 +343,50 @@ const char* pkt_get_payload(const pkt_t* pkt)
 
 pkt_status_code pkt_set_type(pkt_t *pkt, const ptypes_t type)
 {
-    /* Your code will be inserted here */
+    pkt->type = type;
+    return PKT_OK;
 }
 
 pkt_status_code pkt_set_tr(pkt_t *pkt, const uint8_t tr)
 {
-    /* Your code will be inserted here */
+    pkt->tr = tr;
+    return PKT_OK;
 }
 
 pkt_status_code pkt_set_window(pkt_t *pkt, const uint8_t window)
 {
-    /* Your code will be inserted here */
+    pkt->window = window;
+    return PKT_OK;
 }
 
 pkt_status_code pkt_set_seqnum(pkt_t *pkt, const uint8_t seqnum)
 {
-    /* Your code will be inserted here */
+    pkt->seqnum = seqnum;
+    return PKT_OK;
 }
 
 pkt_status_code pkt_set_length(pkt_t *pkt, const uint16_t length)
 {
-    /* Your code will be inserted here */
+    pkt->length = length;
+    return PKT_OK;
 }
 
 pkt_status_code pkt_set_timestamp(pkt_t *pkt, const uint32_t timestamp)
 {
-    /* Your code will be inserted here */
+    pkt->timestamp = timestamp;
+    return PKT_OK;
 }
 
 pkt_status_code pkt_set_crc1(pkt_t *pkt, const uint32_t crc1)
 {
-    /* Your code will be inserted here */
+    pkt->crc1 = crc1;
+    return PKT_OK;
 }
 
 pkt_status_code pkt_set_crc2(pkt_t *pkt, const uint32_t crc2)
 {
-    /* Your code will be inserted here */
+    pkt->crc2 = crc2;
+    return PKT_OK;
 }
 
 pkt_status_code pkt_set_payload(pkt_t *pkt,
