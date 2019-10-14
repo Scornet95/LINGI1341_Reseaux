@@ -229,7 +229,6 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
       }
     }
     free(timestamp_8bit);
-
     //Calcul of the first crc
     uint32_t crc_1 = crc32(0L, Z_NULL, 0);
     char* tr_to_0 = (char *) malloc(sizeof(char));
@@ -238,26 +237,29 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     crc_1 = crc32(crc_1, tr_to_0, 1);
     ssize_t headLength = predict_header_length(pkt);
     int j = 1;
-    for (j, j < headLength, j++)
+    for (j; j < headLength; j++){
       crc_1 = crc32(crc_1, buf + j, 1);
+    }
     uint8_t * crc = (uint8_t *) malloc(4);
     crc[0] = (crc_1_nbo) & 0x000000ff;
     crc[1] = (crc_1_nbo >> 8) & 0x000000ff;
     crc[2] = (crc_1_nbo >> 16) & 0x000000ff;
     crc[3] = crc_1_nbo >> 24;
-    for (int i = 0; i < 4; i++)
-      *(buf + index) = (char) crc[i];
+    int v = 0;
+    for (v; v < 4; v++){
+      *(buf + index) = (char) crc[v];
       index += 1;
       if (index >= *len){
         free(crc);
         return E_NOMEM;
       }
+    }
     free(crc);
     int index_calcul_crc2 = index;
     //Payload in the buffer
     if (type == 1){
         const char * payload = pkt_get_payload(pkt);
-        for(int k = 0, k < length, 1){
+        for(int k = 0; k < length; 1){
           *(buf + index) = payload[k];
           index += 1;
           if(index >= len){
@@ -271,7 +273,7 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
 
     //Calcule du crc2
     uint32_t crc_2 = crc32(0L,Z_NULL,0);
-    for(index_calcul_crc2, index_calcul_crc2 < length, index_calcul_crc2++){
+    for(index_calcul_crc2; index_calcul_crc2 < length; index_calcul_crc2++){
       crc2 = crc32(crc2,buf+index_calcul_crc2,1);
     }
     uint8_t* crc_2_final = (uint8_t *) malloc(sizeof(uint8_t)*2);
@@ -279,8 +281,9 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     crc_2_final[1] = (crc2_nbo >> 8) & 0x000000ff;
     crc_2_final[2] = (crc2_nbo >> 16) & 0x000000ff;
     crc_2_final[3] = crc2_nbo >> 24;
-    for (int i = 0; i < 4; i++){
-      *(buf + index) = (char) crc_2_final[i];
+    int o = 0;
+    for (o; o < 4; o++){
+      *(buf + index) = (char) crc_2_final[o];
       index += 1;
       if (index >= *len){
         free(crc_2_final);
