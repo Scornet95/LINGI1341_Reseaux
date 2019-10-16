@@ -18,7 +18,7 @@ const char * real_address(const char *address, struct sockaddr_in6 *rval){
   errcode = getaddrinfo(address, NULL, &hints, result);
   if (errcode < 0){
     *erreur_string = gai_strerror(errcode);
-    return *erreur_string;
+    return erreur_string;
   }
   struct sockaddr_in6 *addresse = (struct sockaddr_in6) malloc(sizeof(struct sockaddr_in6));
   addresse = result->ai_addr;
