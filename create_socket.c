@@ -15,19 +15,29 @@ int create_socket(struct sockaddr_in6 *source_addr,int src_port,struct sockaddr_
   if ((sockfd = socket(PF_INET6, SOCK_STREAM, 0)) < 0 ){
     return -1;
   }
-  if (source_addr->sin6_addr != NULL){
-    int err = bind(sockfd, (struct sockaddr *) &source_addr,sizeof(source_addr));
-    if (err < 0){
-      return -1;
+  if (source_addr != NULL){
+    if (src_port > 0){
+      source_addr->sin6_port = htons(scr_port);
+    }
+  else{
+    dest_addr->sin6_family = AF_INET6;
+  }
+  if (dest_addr != NULL){
+    if (dst_port > 0){
+      dest_addr->sin6_port = htons(dst_port);
+    }
+  }
+  else{
+    source_addr->sin_6family = AF_INET6;
+  }
+  int err = bind(sockfd, (struct sockaddr *) &source_addr,sizeof(struct sockaddr));
+  if (err < 0){
+    return -1;
     }
 
-  }
-  if (src_port >= 0){
-    if (setsockopt(sockfd,SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, sizeof(int), optlen)); // Pour connecter ke port, a finir
   }
   if ((connect(sockfd, dest_addr, sizeof(dest_addr))) < 0){
     return -1;
   }
   return sockfd;
-
 }
