@@ -40,7 +40,6 @@ void pkt_del(pkt_t *pkt)
 
 pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
 {
-    pkt = pkt_new();
     int index = 0;
     pkt_set_type(pkt, data[index] >> 6);
     if(pkt->type != 1 && pkt->type != 2 && pkt->type != 3){
@@ -154,20 +153,20 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     type_retrieve = pkt_get_type(pkt);
     uint8_t type;
     if (type_retrieve == 1){
-      type = 1;
+      type = 00000001;
     }
     if (type_retrieve == 2){
-      type = 2;
+      type = 00000010;
     }
     if (type_retrieve == 3){
-      type = 3;
+      type = 00000011;
     }
     uint8_t tr = pkt_get_tr(pkt);
     uint8_t window = pkt_get_window(pkt);
     uint8_t first8;
     first8 = (type << 6);
-    first8 = first8 + (tr << 5);
-    first8 = first8 + window;
+    first8 = (first8 & (tr << 5));
+    first8 = (first8 & window);
     *buf = (char) first8;
     index += 1;
     uint16_t length = pkt_get_length(pkt);
@@ -205,7 +204,7 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     }
     uint32_t timestamp = pkt_get_timestamp(pkt);
     uint8_t * timestamp_8bit = (uint8_t *) malloc(4);
-    timestamp_8bit[0] = timestamp >> 24;
+    timestamp_8bit[0] = (timestamp >> 24)& 0x000000ff;
     timestamp_8bit[1] = (timestamp >> 16) & 0x000000ff;
     timestamp_8bit[2] = (timestamp >> 8) & 0x000000ff;
     timestamp_8bit[3] = (timestamp & 0x000000ff);
