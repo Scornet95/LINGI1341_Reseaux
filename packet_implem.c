@@ -62,15 +62,20 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     index++;
 
     uint32_t timestamp = 0;
-    int i;
-    for(i = 0; i < 4; i++){
-        timestamp += data[index];
-        timestamp = timestamp << 8;
-        index++;
-    }
-    pkt->timestamp = timestamp;
+    timestamp += ((uint32_t) data[index]);
+    index++;
+    timestamp += ((uint32_t) data[index]) << 8;
+    index++;
+    timestamp += ((uint32_t) data[index]) << 16;
+    index++;
+    timestamp += ((uint32_t) data[index]) << 24;
+    index++;
+
+    pkt_set_timestamp(pkt, timestamp);
+
 
     uint32_t crc1 = 0;
+    int i;
     for(i = 0; i < 4; i++){
         crc1 += data[index];
         crc1 = crc1 << 8;
