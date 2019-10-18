@@ -21,14 +21,13 @@
  */
 int wait_for_client(int sfd){
   struct sockaddr_in6 dest_addr;
-  char buf[1024];
   socklen_t length = (socklen_t) sizeof(struct sockaddr_in6);
   ssize_t err_rec;
-  err_rec = recvfrom(sfd,buf,1024,0,(struct sockaddr *)&dest_addr,&length);
+  err_rec = recvfrom(sfd, NULL, 0, MSG_PEEK, (struct sockaddr *) &dest_addr, &length);
   if (err_rec < 0){
     return -1;
   }
-  if ((connect(sfd,(const struct sockaddr *)&dest_addr,length)) < 0){
+  if ((connect(sfd, (const struct sockaddr *) &dest_addr, length)) < 0){ 
     return -1;
   }
   return 0;
