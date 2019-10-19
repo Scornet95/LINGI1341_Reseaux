@@ -12,13 +12,7 @@ struct param_t getArguments(int argc, char* argv[]){
 				toRet.format = optarg;
 				break;
 			default:
-				fprintf(stderr, "Usage:\n"
-								"-s      Act as server\n"
-								"-c      Act as client\n"
-								"-p PORT UDP port to connect to (client)\n"
-								"        or to listen on (server)\n"
-								"-h HOST UDP of the server (client)\n"
-								"        or on which we listen (server)\n");
+				fprintf(stderr, "");
 				break;
 
 		}
@@ -65,4 +59,35 @@ int pkt_verif(pkt_t *pkt,int last_ack){
     if (pkt->seqnum == last_ack){
         return 0;
     }
+}
+
+int create_socket(struct sockaddr_in6 *source_addr,int src_port,struct sockaddr_in6 *dest_addr,int dst_port){
+    int sockfd;
+    sockfd = socket(PF_INET6, SOCK_DGRAM, IPPROTO_UDP);
+    if (sockfd < 0){
+        return -1;
+    }
+    if(source_addr != NULL && src_port > 0){
+        source_addr->sin6_port = htons(src_port);
+        source_addr->sin6_family = AF_INET6;
+        int err = bind(sockfd,(struct sockaddr*) source_addr, sizeof(struct sockaddr_in6));
+        if (err < 0){
+            fprintf(stderr, "error while binding the socket to source adress\n");
+            return -1;
+        }
+    }
+    else if(dest_addr != NULL && dst_port > 0){
+        dest_addr->sin6_port = htons(dst_port);
+        dest_addr->sin6_family = AF_INET6;
+        int err = connect(sockfd,(struct sockaddr*) dest_addr, sizeof(struct sockaddr_in6));
+        if (err < 0){
+            fprintf(stderr, "error while connecting the socket to dest\n");
+            return -1;
+        }
+    }
+    else{
+        fprintf(stderr, "No valid source or dest addr/port\n");
+        return -1;
+    }
+    return sockfd;
 }
