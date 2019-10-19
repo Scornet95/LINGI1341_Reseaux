@@ -1,13 +1,32 @@
-#include <netinet/in.h> /* * sockaddr_in6 */
-#include <sys/types.h> /* Voir NOTES */
-#include <sys/socket.h>
-#include <stdint.h> /* uintx_t */
-#include <stdio.h>
-#include <stdlib.h>
-#include <netdb.h>
-#include <string.h>
-#include <arpa/inet.h>
-#include"real_address.h"
+#include "utils.h"
+
+struct param_t getArguments(int argc, char* argv[]){
+    struct param_t toRet;
+    int opt, index;
+    while ((opt = getopt(argc, argv, "m:o:")) != -1) {
+		switch (opt) {
+			case 'm':
+				toRet.maxCo = atoi(optarg);
+				break;
+			case 'o':
+				toRet.format = optarg;
+				break;
+			default:
+				fprintf(stderr, "Usage:\n"
+								"-s      Act as server\n"
+								"-c      Act as client\n"
+								"-p PORT UDP port to connect to (client)\n"
+								"        or to listen on (server)\n"
+								"-h HOST UDP of the server (client)\n"
+								"        or on which we listen (server)\n");
+				break;
+
+		}
+	}
+    for(index = optind; index < argc; idex++){
+        
+    }
+}
 
 const char * real_address(const char *address, struct sockaddr_in6 *rval){
     int status;
