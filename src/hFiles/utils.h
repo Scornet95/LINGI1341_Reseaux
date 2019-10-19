@@ -18,6 +18,14 @@ struct param_t{
     int maxCo;
 };
 
+struct adress_t{
+    struct sockaddr_in6 *adress;
+    int last_ack;
+    pkt_t *buffer[];
+
+};
+
+int pkt_verif(pkt_t *pkt,int last_ack);
 const char * real_address(const char *address, struct sockaddr_in6 *rval);
 
 struct param_t getArguments(int argc, char* argv[]);

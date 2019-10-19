@@ -24,7 +24,7 @@ struct param_t getArguments(int argc, char* argv[]){
 		}
 	}
     for(index = optind; index < argc; idex++){
-        
+
     }
 }
 
@@ -51,4 +51,18 @@ const char * real_address(const char *address, struct sockaddr_in6 *rval){
 
     freeaddrinfo(servinfo);
     return NULL;
+}
+int pkt_verif(pkt_t *pkt,int last_ack){
+    if (pkt->tr == 1){
+        return 1;
+    }
+    if (pkt->seqnum < last_ack){
+        return 2;
+    }
+    if (pkt->seqnum > last_ack){
+        return 3;
+    }
+    if (pkt->seqnum == last_ack){
+        return 0;
+    }
 }
