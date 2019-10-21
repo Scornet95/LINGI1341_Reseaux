@@ -33,6 +33,5 @@ ordered_ll * create_ordered_ll();
 int add(ordered_ll * q, pkt_t *pkt);
 
 pkt_t * retrieve(ordered_ll * linked_list);
-int main();
 
 #endif

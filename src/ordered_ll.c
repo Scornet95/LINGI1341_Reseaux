@@ -1,7 +1,5 @@
 #include "ordered_ll.h"
 
-
-
 node * create_node(){
     node *new_node = malloc(sizeof(node));
     if(new_node == NULL){
