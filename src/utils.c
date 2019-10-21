@@ -1,41 +1,51 @@
 #include "utils.h"
-
+#include "packet_interface.h"
 struct param_t getArguments(int argc, char* argv[]){
     struct param_t toRet;
     struct sockaddr_in6 host_adress;
-    int opt, index;
-    while ((opt = getopt(argc, argv, "m:o:")) != -1) {
-		switch (opt) {
+    int optind;
+    while ((optind = getopt(argc, argv, "m:o:")) != -1) {
+		switch (optind) {
 			case 'm':
 				toRet.maxCo = atoi(optarg);
 				break;
 			case 'o':
-                toRet.format = malloc(sizeof(char)*(strlen(optarg)+1));
+                toRet.format = malloc(sizeof(char)*(strlen(optarg)+1);
 				toRet.format = optarg;
 				break;
 			default:
 				fprintf(stderr, "Usage:\n"
-								"-m maximum simultaneaous communications\n"
-								"-o format of the filenames to write to.\n"
-								"hostname\n"
-                                "port number\n");
+								"-s      Act as server\n"
+								"-c      Act as client\n"
+								"-p PORT UDP port to connect to (client)\n"
+								"        or to listen on (server)\n"
+								"-h HOST UDP of the server (client)\n"
+								"        or on which we listen (server)\n");
 				break;
+
 		}
 	}
-    for(index = optind; index < argc; index++){
-        if(index == argc -1){
-            toRet.port = atoi(argv[index]);
-        }
-        const char *s = real_address(argv[index], &host_adress);
-        if(s == NULL){
-            toRet.adress = malloc(sizeof(host_adress));
-            memcpy(toRet.adress,&host_adress,sizeof(host_adress));
-        }
-        else{
-            printf("couldn't resolve the adress %s. Please try again with another adress\n", argv[index]);
-            return toRet;
-        }
+    if (argc < optind){
+        fprintf(stderr,"wrong numbers of arguments");
     }
+    if ((real_address(argv[optind],&host_adress)) != NULL){
+        fprintf(stderr, "The function real_adress failed");
+        }
+    toRet.adress = malloc(sizeof(host_adress));
+    memcpy(toRet.adress,&host_adress,sizeof(host_adress));
+<<<<<<< HEAD
+    optind++;
+    if (argc < optind){
+        fprintf(stderr,"wrong numbers of arguments");
+    }
+    toRet.port = atoi(argv[optind]);
+=======
+    index++;
+    if (argc > optind){
+        fprintf(stderr,"wrong numbers of arguments");
+    }
+    toRet.port = argv[optind];
+>>>>>>> 528bbb49bcd9cd4488c8afe5aa8be5b5bd1b1326
     return toRet;
 }
 
@@ -76,7 +86,9 @@ int pkt_verif(pkt_t *pkt, int last_ack){
     if (pkt_get_seqnum(pkt) == last_ack){
         return 0;
     }
-    return -1;
+    else{
+        fprintf(stderr,"Impossible to treat the sequence number\n");
+    }
 }
 
 int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockaddr_in6 *dest_addr, int dst_port){
@@ -108,4 +120,54 @@ int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockadd
         return -1;
     }
     return sockfd;
+}
+
+char * pkt_nack_or_ack(int verif, int last_ack,pkt_t check_seqnum,int places_buffer){
+    pkt_t *pkt_ret = pkt_new();
+    char *buf = malloc(sizeof(char)*7);
+    uint32_t crc1;
+    if (verif == 1){
+        pkt_ret->type = 3;
+        pkt_ret->tr = 0;
+        pkt_ret->window = places_buffer;
+        pkt_ret->length = 0;
+        pkt_ret->seqnum = check_seqnum.seqnum;
+        pkt_ret->timestamp = check_seqnum.timestamp;
+        if ((pkt_encode(pkt_ret, buf, 7)) == PKT_OK{
+            return buf;
+        }
+        else{
+            fprintf(stderr,"Error while encoding the nack response\n");
+        }
+    }
+    if (verif == 2 || verif == 3){
+        pkt_ret->type = 2;
+        pkt_ret->tr = 0;
+        pkt_ret->window = places_buffer;
+        pkt_ret->length = 0;
+        pkt_ret->seqnum = last_ack;
+        pkt_ret->timestamp = check_seqnum.timestamp;
+        if ((pkt_encode(pkt_ret, buf, 7)) == PKT_OK{
+            return buf;
+        }
+        else{
+            fprintf(stderr,"Error while encoding the ack response with different sequence numbers\n");
+        }
+    }
+    if (verif == 0){
+        pkt_ret->type = 2;
+        pkt_ret->tr = 0;
+        pkt_ret->window = places_buffer;
+        pkt_ret->length = 0;
+        pkt_ret->seqnum = last_ack++;
+        pkt_ret->timestamp = check_seqnum.timestamp;
+        if ((pkt_encode(pkt_ret, buf, 7)) == PKT_OK{
+            return buf;
+        }
+        else{
+            fprintf(stderr,"Error while encoding the ack response for same sequence number\n");
+        }
+    }
+
+
 }
