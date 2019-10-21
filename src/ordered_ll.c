@@ -17,15 +17,71 @@ ordered_ll * create_ordered_ll(){
     return q;
 }
 
-int enqueue(ordered_ll *q, pkt_t *pkt){
-    if(q==NULL){return -1;}
-    if(pkt==NULL){return -2;}
-    node *new_node = create_node();
-    new_node->pkt = pkt;
-    new_node->next = q->front;
-    q->front = new_node;
-    free(new_node);
-    return 0;
+void enqueue(ordered_ll *q, pkt_t *pkt){
+    int type_pkt = pkt_get_type(pkt);
+    if (type_pkt == 3){
+        node * curseur_node = q.front;
+        node * new_node = create_node();
+        if (new_node == NULL){
+            new_node->pkt = pkt;
+            new_node->next = NULL;
+            q->front = new_node;
+            return;
+        }
+        else{
+            if (curseur_node->next == NULL){
+                new_node->pkt = pkt;
+                new_node->next = NULL;
+                q->front->next = new_node;
+                return;
+            }
+            else{
+                while(curseur_node->next != NULL){
+                    curseur_node = curseur_node->next;
+            }
+            new_node->pkt = pkt;
+            new_node->next = NULL;
+            curseur_node->next = new_node;
+            return;
+            }
+        }
+    }
+    else if(type_pkt == 2){
+        if(q==NULL){return;}
+        if(pkt==NULL){return;}
+        if (q->front == NULL){
+            node *new_node = create_node();
+            new_node->pkt = pkt;
+            new_node->next = NULL;
+            q->front = new_node;
+            return;
+        }
+        int type = pkt_get_type(q->front->pkt);
+        if (type == 3){
+            node *new_node = create_node();
+            new_node->pkt = pkt;
+            new_node->next = q->front;
+            q->front = new_node;
+            return;
+        }
+        int new_seqnum = pkt_get_seqnum(pkt);
+        int actual_seqnum = pkt_get_seqnum(q->front->pkt);
+        if (new_seqnum > actual_seqnum){
+            node *new_node = create_node();
+            new_node->pkt = pkt;
+            new_node->next = q->front->next;
+            delete_node(q->front);
+            q->front = new_node;
+            return;
+    }
+    else{
+        fprintf(stderr,"The packet should be of type Nack or Ack\n");
+    }
+}
+
+void delete_node(node *node){
+    pkt_del(node->pkt);
+    free(node);
 }
 int add(ordered_ll * q, pkt_t *pkt){
     if(q==NULL){return -1;}
@@ -71,14 +127,14 @@ pkt_t * retrieve(ordered_ll * q){
     node *n = create_node();
     n = q->front;
     if (q->size == 1){
-        free(n);
+        delete_node(n);
         q->front = NULL;
         q->size = q->size-1;
         return new_pkt;
     }
     q->front = n->next;
     q->size = q->size - 1;
-    free(n);
+    delete_node(n);
     return new_pkt;
 }
 
