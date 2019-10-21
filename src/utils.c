@@ -122,7 +122,7 @@ int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockadd
     return sockfd;
 }
 
-char * pkt_nack_or_ack(int verif, int last_ack,pkt_t check_seqnum,int places_buffer){
+char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t check_seqnum,int places_buffer){
     pkt_t *pkt_ret = pkt_new();
     char *buf = malloc(sizeof(char)*7);
     uint32_t crc1;
@@ -159,7 +159,8 @@ char * pkt_nack_or_ack(int verif, int last_ack,pkt_t check_seqnum,int places_buf
         pkt_ret->tr = 0;
         pkt_ret->window = places_buffer;
         pkt_ret->length = 0;
-        pkt_ret->seqnum = last_ack++;
+        *last_ack += 1;
+        pkt_ret->seqnum = last_ack;
         pkt_ret->timestamp = check_seqnum.timestamp;
         if ((pkt_encode(pkt_ret, buf, 7)) == PKT_OK{
             return buf;
