@@ -10,6 +10,7 @@ struct param_t getArguments(int argc, char* argv[]){
 				toRet.maxCo = atoi(optarg);
 				break;
 			case 'o':
+                toRet.format = malloc(sizeof(char)*(strlen(optarg)+1);
 				toRet.format = optarg;
 				break;
 			default:
@@ -32,11 +33,19 @@ struct param_t getArguments(int argc, char* argv[]){
         }
     toRet.adress = malloc(sizeof(host_adress));
     memcpy(toRet.adress,&host_adress,sizeof(host_adress));
+<<<<<<< HEAD
     optind++;
     if (argc < optind){
         fprintf(stderr,"wrong numbers of arguments");
     }
     toRet.port = atoi(argv[optind]);
+=======
+    index++;
+    if (argc > optind){
+        fprintf(stderr,"wrong numbers of arguments");
+    }
+    toRet.port = argv[optind];
+>>>>>>> 528bbb49bcd9cd4488c8afe5aa8be5b5bd1b1326
     return toRet;
 }
 
