@@ -10,7 +10,7 @@ struct param_t getArguments(int argc, char* argv[]){
 				toRet.maxCo = atoi(optarg);
 				break;
 			case 'o':
-                toRet.format = malloc(sizeof(char)*(strlen(optarg)+1);
+                toRet.format = malloc(sizeof(char)*(strlen(optarg)+1));
 				toRet.format = optarg;
 				break;
 			default:
@@ -22,7 +22,6 @@ struct param_t getArguments(int argc, char* argv[]){
 								"-h HOST UDP of the server (client)\n"
 								"        or on which we listen (server)\n");
 				break;
-
 		}
 	}
     if (argc < optind){
@@ -33,19 +32,11 @@ struct param_t getArguments(int argc, char* argv[]){
         }
     toRet.adress = malloc(sizeof(host_adress));
     memcpy(toRet.adress,&host_adress,sizeof(host_adress));
-<<<<<<< HEAD
     optind++;
     if (argc < optind){
         fprintf(stderr,"wrong numbers of arguments");
     }
     toRet.port = atoi(argv[optind]);
-=======
-    index++;
-    if (argc > optind){
-        fprintf(stderr,"wrong numbers of arguments");
-    }
-    toRet.port = argv[optind];
->>>>>>> 528bbb49bcd9cd4488c8afe5aa8be5b5bd1b1326
     return toRet;
 }
 
@@ -86,6 +77,7 @@ int pkt_verif(pkt_t *pkt, int last_ack){
     if (pkt_get_seqnum(pkt) == last_ack){
         return 0;
     }
+    return -1;
 }
 
 int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockaddr_in6 *dest_addr, int dst_port){
