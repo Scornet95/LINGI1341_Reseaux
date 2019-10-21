@@ -3,9 +3,9 @@
 struct param_t getArguments(int argc, char* argv[]){
     struct param_t toRet;
     struct sockaddr_in6 host_adress;
-    int optind;
-    while ((optind = getopt(argc, argv, "m:o:")) != -1) {
-		switch (optind) {
+    int opt, index;
+    while ((opt = getopt(argc, argv, "m:o:")) != -1) {
+		switch (opt) {
 			case 'm':
 				toRet.maxCo = atoi(optarg);
 				break;
@@ -15,28 +15,27 @@ struct param_t getArguments(int argc, char* argv[]){
 				break;
 			default:
 				fprintf(stderr, "Usage:\n"
-								"-s      Act as server\n"
-								"-c      Act as client\n"
-								"-p PORT UDP port to connect to (client)\n"
-								"        or to listen on (server)\n"
-								"-h HOST UDP of the server (client)\n"
-								"        or on which we listen (server)\n");
+								"-m maximum simultaneaous communications\n"
+								"-o format of the filenames to write to.\n"
+								"hostname\n"
+                                "port number\n");
 				break;
 		}
 	}
-    if (argc < optind){
-        fprintf(stderr,"wrong numbers of arguments");
-    }
-    if ((real_address(argv[optind],&host_adress)) != NULL){
-        fprintf(stderr, "The function real_adress failed");
+    for(index = optind; index < argc; index++){
+        if(index == argc -1){
+            toRet.port = atoi(argv[index]);
         }
-    toRet.adress = malloc(sizeof(host_adress));
-    memcpy(toRet.adress,&host_adress,sizeof(host_adress));
-    optind++;
-    if (argc < optind){
-        fprintf(stderr,"wrong numbers of arguments");
+        const char *s = real_address(argv[index], &host_adress);
+        if(s == NULL){
+            toRet.adress = malloc(sizeof(host_adress));
+            memcpy(toRet.adress,&host_adress,sizeof(host_adress));
+        }
+        else{
+            printf("couldn't resolve the adress %s. Please try again with another adress\n", argv[index]);
+            return toRet;
+        }
     }
-    toRet.port = atoi(argv[optind]);
     return toRet;
 }
 
