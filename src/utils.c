@@ -36,7 +36,6 @@ struct param_t getArguments(int argc, char* argv[]){
     }
     return toRet;
 }
-}
 
 const char * real_address(const char *address, struct sockaddr_in6 *rval){
     int status;
@@ -76,6 +75,7 @@ int pkt_verif(pkt_t *pkt, int last_ack){
     }
     else{
         fprintf(stderr,"Impossible to treat the sequence number\n");
+        return -1;
     }
 }
 
@@ -117,7 +117,7 @@ char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places
     uint8_t seqnum = pkt_get_seqnum(check_seqnum);
     uint32_t timestamp = pkt_get_timestamp(check_seqnum);
     uint32_t crc1;
-    size_t *len = 7;
+    size_t len = 7;
     if (verif == 1){
         pkt_set_type(pkt_ret, 3);
         pkt_set_tr(pkt_ret,0);
@@ -125,7 +125,7 @@ char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places
         pkt_set_length(pkt_ret,0);
         pkt_set_seqnum(pkt_ret,seqnum);
         pkt_set_timestamp(pkt_ret,timestamp);
-        if ((pkt_encode(pkt_ret, buf, len)) == PKT_OK){
+        if ((pkt_encode(pkt_ret, buf, &len)) == PKT_OK){
             return buf;
         }
         else{
@@ -139,7 +139,7 @@ char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places
         pkt_set_length(pkt_ret,0);
         pkt_set_seqnum(pkt_ret,*last_ack);
         pkt_set_timestamp(pkt_ret,timestamp);
-        if ((pkt_encode(pkt_ret, buf, len)) == PKT_OK){
+        if ((pkt_encode(pkt_ret, buf, &len)) == PKT_OK){
             return buf;
         }
         else{
@@ -154,13 +154,12 @@ char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places
         *last_ack += 1;
         pkt_set_seqnum(pkt_ret,*last_ack);
         pkt_set_timestamp(pkt_ret,timestamp);
-        if ((pkt_encode(pkt_ret, buf, len)) == PKT_OK){
+        if ((pkt_encode(pkt_ret, buf, &len)) == PKT_OK){
             return buf;
         }
         else{
             fprintf(stderr,"Error while encoding the ack response for same sequence number\n");
         }
     }
-
-
+    return NULL;
 }
