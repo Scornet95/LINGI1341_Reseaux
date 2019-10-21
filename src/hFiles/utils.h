@@ -13,20 +13,22 @@
 #include <unistd.h>
 
 #include "packet_interface.h"
+#include "ordered_ll.h"
 
-struct param_t{
+typedef struct param_t{
     struct sockaddr_in6 *adress;
     int port;
     char* format;
     int maxCo;
-};
+}param_t;
 
-struct adress_t{
+typedef struct address_t{
     struct sockaddr_in6 *adress;
     int last_ack;
     int fd;
-    pkt_t *buffer[];
-};
+    int window;
+    ordered_ll *buffer;
+}address_t;
 
 int pkt_verif(pkt_t *pkt,int last_ack);
 

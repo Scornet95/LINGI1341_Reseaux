@@ -15,6 +15,18 @@ typedef enum {
     PTYPE_NACK = 3,
 } ptypes_t;
 
+struct __attribute__((__packed__)) pkt {
+    ptypes_t type;
+    uint8_t tr;
+    uint8_t window;
+    uint16_t length;
+    uint8_t seqnum;
+    uint32_t timestamp;
+    uint32_t crc1;
+    uint32_t crc2;
+    char* payload;
+};
+
 /* Taille maximale permise pour le payload */
 #define MAX_PAYLOAD_SIZE 512
 /* Taille maximale de Window */

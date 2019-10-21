@@ -4,8 +4,8 @@ CFLAGS= -Wall -g -Wextra -I src/hFiles
 CFLAGS += -Wshadow
 LDFLAGS = -lz
 
-OBJ= packet_interface.o utils.o
-SRC= src/packet_interface.c src/utils.c
+OBJ= packet_interface.o utils.o ordered_ll.o
+SRC= src/packet_interface.c src/utils.c src/ordered_ll.c
 
 
 

@@ -4,17 +4,6 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-struct __attribute__((__packed__)) pkt {
-    ptypes_t type;
-    uint8_t tr;
-    uint8_t window;
-    uint16_t length;
-    uint8_t seqnum;
-    uint32_t timestamp;
-    uint32_t crc1;
-    uint32_t crc2;
-    char* payload;
-};
 /* Extra code */
 /* Your code will be inserted here */
 

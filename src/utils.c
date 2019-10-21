@@ -116,7 +116,6 @@ char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places
     char *buf = malloc(sizeof(char)*7);
     uint8_t seqnum = pkt_get_seqnum(check_seqnum);
     uint32_t timestamp = pkt_get_timestamp(check_seqnum);
-    uint32_t crc1;
     size_t len = 7;
     if (verif == 1){
         pkt_set_type(pkt_ret, 3);
@@ -130,6 +129,7 @@ char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places
         }
         else{
             fprintf(stderr,"Error while encoding the nack response\n");
+            return NULL;
         }
     }
     if (verif == 2 || verif == 3){
