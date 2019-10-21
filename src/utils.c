@@ -113,7 +113,6 @@ int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockadd
 pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, int window){
     pkt_t *pkt_ret;
     pkt_ret = pkt_new();
-    size_t len = 7;
     if(ack){
         pkt_set_type(pkt_ret, 2);
         pkt_set_tr(pkt_ret, 0);

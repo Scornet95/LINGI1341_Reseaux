@@ -19,7 +19,7 @@ int main(int argc, char* argv[]){
         return -1;
     char* ackBuffer = malloc(sizeof(char) * 7);
     if(ackBuffer == NULL)
-        return -1;
+        return -1; 
 
     address_t addie;
     addie.last_ack = 0;
@@ -82,13 +82,37 @@ int main(int argc, char* argv[]){
                 pkt_t* ack = ackEncode(addie.last_ack, addie.timestamp, 1, addie.window);
                 enqueue(addie.acks, ack);
             }
+            /*fonction pour vider le buffer et encoder un ack + écrire dans le fichier correspondant.*/
             pkt_del(pkt);
-
-
         }
         if(pfd[0].revents & POLLOUT){ //Il y a de la place pour écrire sur le socket, c'est ici que l'on va envoyer les acks.
             printf("ack\n");
         }
 
+    }
+}
+
+int emptyBuffer(address_t* add){
+    if(peek(add->buffer) > add->last_ack)
+        return -1;
+    else{//Le premier élément de la liste a le seqnum last_ack
+        int maxSeq;
+        ssize_t err;
+        pkt_t* pkt;
+        do{
+            pkt = retrieve(add->buffer);
+            if(pkt != NULL){
+                maxSeq = pkt_get_seqnum(pkt);
+                err = write(add->fd, pkt_get_payload(pkt), pkt_get_length(pkt));
+                if(err < MAX_PAYLOAD_SIZE){ //Je suppose ici que si je reçois un paquet qui n'est pas de taille max, c'est que c'est le dernier et il contient donc eof
+                    close(add->fd);
+                    break;
+                }
+            }
+        }while(peek(add->buffer) == maxSeq + 1);
+        //mettre last_ack à jour et encoder le ack que l'on va envoyer
+        add->last_ack = maxSeq + 1;
+        pkt_t* ack = ackEncode(add->last_ack, add->timestamp, 1, add->window);
+        enqueue(add->acks, ack);
     }
 }
