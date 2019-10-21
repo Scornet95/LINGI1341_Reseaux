@@ -60,13 +60,28 @@ int main(int argc, char* argv[]){
             status = pkt_verif(pkt, addie.last_ack);
             if(status == 0){ //Le paquet reçu correspond à celui attendu, on le place dans le buffer, on update last_ack et on renvoie un ack.
                 add(addie.buffer, pkt);
-                pkt.timestamp = pkt_get_timestamp(pkt);
+                addie.timestamp = pkt_get_timestamp(pkt);
             }
 
             if(status == 1){ //Le paquet reçu est tronqué, on encode un NACK.
-                
+                //encoder un NACK et le mettre dans la fifo.
+                addie.timestamp = pkt_get_timestamp(pkt);
+                pkt_t* nAck = ackEncode(pkt_get_seqnum(pkt), addie.timestamp, 0, addie.window);
+                enqueue(addie.acks, nAck);
             }
 
+            if(status == 2){
+                addie.timestamp = pkt_get_timestamp(pkt);
+                pkt_t* ack = ackEncode(addie.last_ack, addie.timestamp, 1, addie.window);
+                enqueue(addie.acks, ack);
+            }
+
+            if(status == 3){
+                add(addie.buffer, pkt);
+                addie.timestamp = pkt_get_timestamp(pkt);
+                pkt_t* ack = ackEncode(addie.last_ack, addie.timestamp, 1, addie.window);
+                enqueue(addie.acks, ack);
+            }
             pkt_del(pkt);
 
 
