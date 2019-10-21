@@ -3,7 +3,7 @@
 struct param_t getArguments(int argc, char* argv[]){
     struct param_t toRet;
     struct sockaddr_in6 host_adress;
-    int optind;
+    int optind, index;
     while ((optind = getopt(argc, argv, "m:o:")) != -1) {
 		switch (optind) {
 			case 'm':
