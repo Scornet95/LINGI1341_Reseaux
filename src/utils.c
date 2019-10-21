@@ -23,17 +23,13 @@ struct param_t getArguments(int argc, char* argv[]){
 		}
 	}
     for(index = optind; index < argc; index++){
-        if(index == argc -1){
-            toRet.port = atoi(argv[index]);
-        }
         const char *s = real_address(argv[index], &host_adress);
         if(s == NULL){
             toRet.adress = malloc(sizeof(host_adress));
             memcpy(toRet.adress,&host_adress,sizeof(host_adress));
         }
         else{
-            printf("couldn't resolve the adress %s. Please try again with another adress\n", argv[index]);
-            return toRet;
+            toRet.port = atoi(argv[index]);
         }
     }
     return toRet;
@@ -48,7 +44,6 @@ const char * real_address(const char *address, struct sockaddr_in6 *rval){
     hints.ai_family = AF_INET6; // only IPV6
     hints.ai_socktype = SOCK_DGRAM; // tcp
     hints.ai_protocol = IPPROTO_UDP; // udp protocol
-    hints.ai_flags = AI_PASSIVE; // fill in my Ip for me
 
     status = getaddrinfo(address, NULL, &hints, &servinfo);
     if(status != 0){
