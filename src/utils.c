@@ -3,9 +3,9 @@
 struct param_t getArguments(int argc, char* argv[]){
     struct param_t toRet;
     struct sockaddr_in6 host_adress;
-    int opt, index;
-    while ((opt = getopt(argc, argv, "m:o:")) != -1) {
-		switch (opt) {
+    int optind;
+    while ((optind = getopt(argc, argv, "m:o:")) != -1) {
+		switch (optind) {
 			case 'm':
 				toRet.maxCo = atoi(optarg);
 				break;
@@ -24,19 +24,19 @@ struct param_t getArguments(int argc, char* argv[]){
 
 		}
 	}
-    if (argc > optind){
+    if (argc < optind){
         fprintf(stderr,"wrong numbers of arguments");
     }
     if ((real_address(argv[optind],&host_adress)) != NULL){
         fprintf(stderr, "The function real_adress failed");
         }
-    toRet->adress = malloc(sizeof(host_adress));
-    memcpy(toRet->adress,&host_adress,sizeof(host_adress));
-    index++;
-    if (argc > optind){
+    toRet.adress = malloc(sizeof(host_adress));
+    memcpy(toRet.adress,&host_adress,sizeof(host_adress));
+    optind++;
+    if (argc < optind){
         fprintf(stderr,"wrong numbers of arguments");
     }
-    toRet->port = argv[optind];
+    toRet.port = atoi(argv[optind]);
     return toRet;
 }
 
@@ -64,17 +64,48 @@ const char * real_address(const char *address, struct sockaddr_in6 *rval){
     freeaddrinfo(servinfo);
     return NULL;
 }
-int pkt_verif(pkt_t *pkt,int last_ack){
-    if (pkt->tr == 1){
+int pkt_verif(pkt_t *pkt, int last_ack){
+    if (pkt_get_tr(pkt) == 1){
         return 1;
     }
-    if (pkt->seqnum < last_ack){
+    if (pkt_get_seqnum(pkt) < last_ack){
         return 2;
     }
-    if (pkt->seqnum > last_ack){
+    if (pkt_get_seqnum(pkt) > last_ack){
         return 3;
     }
-    if (pkt->seqnum == last_ack){
+    if (pkt_get_seqnum(pkt) == last_ack){
         return 0;
     }
+}
+
+int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockaddr_in6 *dest_addr, int dst_port){
+    int sockfd;
+    sockfd = socket(PF_INET6, SOCK_DGRAM, IPPROTO_UDP);
+    if (sockfd < 0){
+        return -1;
+    }
+    if(source_addr != NULL && src_port > 0){
+        source_addr->sin6_port = htons(src_port);
+        source_addr->sin6_family = AF_INET6;
+        int err = bind(sockfd,(struct sockaddr*) source_addr, sizeof(struct sockaddr_in6));
+        if (err < 0){
+            fprintf(stderr, "error while binding the socket to source adress\n");
+            return -1;
+        }
+    }
+    else if(dest_addr != NULL && dst_port > 0){
+        dest_addr->sin6_port = htons(dst_port);
+        dest_addr->sin6_family = AF_INET6;
+        int err = connect(sockfd,(struct sockaddr*) dest_addr, sizeof(struct sockaddr_in6));
+        if (err < 0){
+            fprintf(stderr, "error while connecting the socket to dest\n");
+            return -1;
+        }
+    }
+    else{
+        fprintf(stderr, "No valid source or dest addr/port\n");
+        return -1;
+    }
+    return sockfd;
 }
