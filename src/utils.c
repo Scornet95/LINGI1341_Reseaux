@@ -10,7 +10,7 @@ struct param_t getArguments(int argc, char* argv[]){
 				toRet.maxCo = atoi(optarg);
 				break;
 			case 'o':
-                toRet.format = malloc(sizeof(char)*(strlen(optarg)+1);
+                toRet.format = malloc(sizeof(char)*(strlen(optarg)+1));
 				toRet.format = optarg;
 				break;
 			default:
@@ -22,7 +22,6 @@ struct param_t getArguments(int argc, char* argv[]){
 								"-h HOST UDP of the server (client)\n"
 								"        or on which we listen (server)\n");
 				break;
-
 		}
 	}
     for(index = optind; index < argc; index++){
@@ -34,6 +33,7 @@ struct param_t getArguments(int argc, char* argv[]){
         else{
             toRet.port = atoi(argv[index]);
         }
+    }
     return toRet;
 }
 
@@ -80,7 +80,7 @@ int pkt_verif(pkt_t *pkt, int last_ack){
 
 int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockaddr_in6 *dest_addr, int dst_port){
     int sockfd;
-    sockfd = socket(PF_INET6, SOCK_DGRAM, IPPROTO_UDP);
+    sockfd = socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
     if (sockfd < 0){
         return -1;
     }
@@ -109,7 +109,7 @@ int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockadd
     return sockfd;
 }
 
-char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t check_seqnum,int places_buffer){
+char * pkt_nack_or_ack(int verif, int * last_ack, pkt_t check_seqnum, int places_buffer){
     pkt_t *pkt_ret = pkt_new();
     char *buf = malloc(sizeof(char)*7);
     uint32_t crc1;
