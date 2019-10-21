@@ -3,15 +3,15 @@
 struct param_t getArguments(int argc, char* argv[]){
     struct param_t toRet;
     struct sockaddr_in6 host_adress;
-    int optind, index;
-    while ((optind = getopt(argc, argv, "m:o:")) != -1) {
-		switch (optind) {
+    int opt, index;
+    while ((opt = getopt(argc, argv, "m:o:")) != -1) {
+		switch (opt) {
 			case 'm':
 				toRet.maxCo = atoi(optarg);
 				break;
 			case 'o':
                 toRet.format = malloc(sizeof(char)*(strlen(optarg)+1));
-				toRet.format = optarg;
+                strcpy(toRet.format, optarg);
 				break;
 			default:
 				fprintf(stderr, "Usage:\n"

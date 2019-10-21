@@ -25,21 +25,25 @@ int main(int argc, char* argv[]){
         pfd[0].fd = sfd;
         pfd[0].events = POLLIN | POLLOUT;
 
+        poll(pfd, 1, -1);
+
         if(pfd[0].revents & POLLIN){ //On a reçu un paquet donc il faut le traiter.
-            printf("zebii\n");
-            size = recvfrom(sfd, firstBuffer, (size_t) MAX_PACKET_SIZE, MSG_TRUNC, (struct sockaddr*) &src_addr, &length); //Cet appel permet de récupérer l'adresse du sender.
+            size = recvfrom(sfd, firstBuffer, (size_t) MAX_PACKET_SIZE, 0, (struct sockaddr*) &src_addr, &length); //Cet appel permet de récupérer l'adresse du sender.
             /*Regarder dans la table des adresses si on connaît cette adresse ci et déterminer ce qu'on fait avec les données.*/
             pkt_t* pkt = pkt_new();
             pkt_status_code err = pkt_decode(firstBuffer, size, pkt);
             if(err != PKT_OK)
                 printf("err : %d\n", err);
             else{
-                printf("payload : %s\n", pkt_get_payload(pkt));
+                printf("payload : %s", pkt_get_payload(pkt));
+            }
+            pkt_del(pkt);
+
+            if(pfd[0].revents & POLLOUT){ //Il y a de la place pour écrire sur le socket, c'est ici que l'on va envoyer les acks.
+                printf("ack\n");
             }
         }
 
-        if(pfd[0].revents & POLLOUT){ //Il y a de la place pour écrire sur le socket, c'est ici que l'on va envoyer les acks.
 
-        }
     }
 }
