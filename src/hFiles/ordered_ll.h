@@ -1,26 +1,38 @@
-#ifndef __ORDEREDLL_H
-#define __ORDEREDLL_H
+#ifndef __ORDEREDLL_H_
+#define __ORDEREDLL_H_
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include "packet_interface.h"
 
-typedef struct node{
+
+typedef struct node node;
+
+typedef struct queue ordered_ll;
+
+struct queue{
+    node *front;
+    int size;
+};
+
+struct node{
     pkt_t * pkt;
     struct node *next;
-}node;
+};
 
-typedef struct queue{
-    node *front;
-    node *rear;
-    int size;
-}ordered_ll;
+int enqueue(ordered_ll *q, pkt_t *pkt);
 
-node * create_node(pkt_t *pkt);
+void destroy_ll(ordered_ll *q);
+
+node * create_node();
+
+int printQ(ordered_ll *q);
 
 ordered_ll * create_ordered_ll();
 
-void add(ordered_ll * q, pkt_t *pkt);
+int add(ordered_ll * q, pkt_t *pkt);
 
 pkt_t * retrieve(ordered_ll * linked_list);
+int main();
 
 #endif
