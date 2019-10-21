@@ -6,6 +6,10 @@ int main(int argc, char* argv[]){
     /* Initialiser la sdd contenant les adresses de chaque sender, à faire pour plusieurs connections*/
 
     int sfd = create_socket(args.adress, args.port, NULL, -1);
+    if(sfd < 0){
+        printf("error socket create\n");
+        return -1;
+    }
 
     struct sockaddr_in6 src_addr;
     socklen_t length = (socklen_t) sizeof(struct sockaddr_in6);
@@ -22,6 +26,7 @@ int main(int argc, char* argv[]){
         pfd[0].events = POLLIN | POLLOUT;
 
         if(pfd[0].revents & POLLIN){ //On a reçu un paquet donc il faut le traiter.
+            printf("zebii\n");
             size = recvfrom(sfd, firstBuffer, (size_t) MAX_PACKET_SIZE, MSG_TRUNC, (struct sockaddr*) &src_addr, &length); //Cet appel permet de récupérer l'adresse du sender.
             /*Regarder dans la table des adresses si on connaît cette adresse ci et déterminer ce qu'on fait avec les données.*/
             pkt_t* pkt = pkt_new();

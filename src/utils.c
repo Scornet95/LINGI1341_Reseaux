@@ -25,27 +25,15 @@ struct param_t getArguments(int argc, char* argv[]){
 
 		}
 	}
-    if (argc < optind){
-        fprintf(stderr,"wrong numbers of arguments");
-    }
-    if ((real_address(argv[optind],&host_adress)) != NULL){
-        fprintf(stderr, "The function real_adress failed");
+    for(index = optind; index < argc; index++){
+        const char *s = real_address(argv[index], &host_adress);
+        if(s == NULL){
+            toRet.adress = malloc(sizeof(host_adress));
+            memcpy(toRet.adress,&host_adress,sizeof(host_adress));
         }
-    toRet.adress = malloc(sizeof(host_adress));
-    memcpy(toRet.adress,&host_adress,sizeof(host_adress));
-<<<<<<< HEAD
-    optind++;
-    if (argc < optind){
-        fprintf(stderr,"wrong numbers of arguments");
-    }
-    toRet.port = atoi(argv[optind]);
-=======
-    index++;
-    if (argc > optind){
-        fprintf(stderr,"wrong numbers of arguments");
-    }
-    toRet.port = argv[optind];
->>>>>>> 528bbb49bcd9cd4488c8afe5aa8be5b5bd1b1326
+        else{
+            toRet.port = atoi(argv[index]);
+        }
     return toRet;
 }
 
@@ -58,7 +46,6 @@ const char * real_address(const char *address, struct sockaddr_in6 *rval){
     hints.ai_family = AF_INET6; // only IPV6
     hints.ai_socktype = SOCK_DGRAM; // tcp
     hints.ai_protocol = IPPROTO_UDP; // udp protocol
-    hints.ai_flags = AI_PASSIVE; // fill in my Ip for me
 
     status = getaddrinfo(address, NULL, &hints, &servinfo);
     if(status != 0){
