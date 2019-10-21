@@ -36,4 +36,5 @@ struct param_t getArguments(int argc, char* argv[]);
 
 int create_socket(struct sockaddr_in6 *source_addr,int src_port,struct sockaddr_in6 *dest_addr,int dst_port);
 
+char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places_buffer);
 #endif

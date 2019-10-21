@@ -1,5 +1,5 @@
-#include "utils.h"
 #include "packet_interface.h"
+#include "utils.h"
 struct param_t getArguments(int argc, char* argv[]){
     struct param_t toRet;
     struct sockaddr_in6 host_adress;
@@ -10,7 +10,7 @@ struct param_t getArguments(int argc, char* argv[]){
 				toRet.maxCo = atoi(optarg);
 				break;
 			case 'o':
-                toRet.format = malloc(sizeof(char)*(strlen(optarg)+1);
+                toRet.format = malloc(sizeof(char)*(strlen(optarg)+1));
 				toRet.format = optarg;
 				break;
 			default:
@@ -122,12 +122,13 @@ int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockadd
     return sockfd;
 }
 
-char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t check_seqnum,int places_buffer){
-    pkt_t *pkt_ret = pkt_new();
+char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places_buffer){
+    pkt_t *pkt_ret;
+    pkt_ret = pkt_new();
     char *buf = malloc(sizeof(char)*7);
     uint32_t crc1;
     if (verif == 1){
-        pkt_ret->type = 3;
+        pkt_set_type
         pkt_ret->tr = 0;
         pkt_ret->window = places_buffer;
         pkt_ret->length = 0;
