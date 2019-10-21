@@ -59,7 +59,12 @@ int main(int argc, char* argv[]){
 
             status = pkt_verif(pkt, addie.last_ack);
             if(status == 0){ //Le paquet reçu correspond à celui attendu, on le place dans le buffer, on update last_ack et on renvoie un ack.
-                    
+                add(addie.buffer, pkt);
+                pkt.timestamp = pkt_get_timestamp(pkt);
+            }
+
+            if(status == 1){ //Le paquet reçu est tronqué, on encode un NACK.
+                
             }
 
             pkt_del(pkt);

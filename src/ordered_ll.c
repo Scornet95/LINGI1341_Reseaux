@@ -1,7 +1,5 @@
 #include "ordered_ll.h"
 
-
-
 node * create_node(){
     node *new_node = malloc(sizeof(node));
     if(new_node == NULL){
@@ -106,80 +104,5 @@ int printQ(ordered_ll *q){
         retrieve(q);
         //printf("%d\n",(int)pkt_get_type(pek));
     }
-    return 0;
-}
-int main() {
-    ordered_ll* q = create_ordered_ll();
-    //Node *n=malloc(sizeof(struct Node));
-
-    pkt_t * pkt = pkt_new();
-	size_t * len = (size_t*) malloc(sizeof(size_t));
-	*len = 30;
-	char * buf = (char *) malloc(30);
-	buf[0] = (char) 0x5c;
-	buf[1] = (char) 0x0b;
-	buf[2] = (char) 0x7b;
-	buf[3] = (char) 0x17;
-	buf[4] = (char) 0x00;
-	buf[5] = (char) 0x00;
-	buf[6] = (char) 0x00;
-	buf[7] = (char) 0x50;
-	buf[8] = (char) 0x12;
-	buf[9] = (char) 0x12;
-	buf[10] = (char) 0x86;
-	buf[11] = (char) 0x68;
-	buf[12] = (char) 0x65;
-	buf[13] = (char) 0x6c;
-	buf[14] = (char) 0x6c;
-	buf[15] = (char) 0x6f;
-	buf[16] = (char) 0x20;
-	buf[17] = (char) 0x77;
-	buf[18] = (char) 0x6f;
-	buf[19] = (char) 0x72;
-	buf[20] = (char) 0x6c;
-	buf[21] = (char) 0x64;
-	buf[22] = (char) 0x0d;
-	buf[23] = (char) 0x4a;
-	buf[24] = (char) 0x11;
-	buf[25] = (char) 0x85;
-
-	pkt_status_code err = pkt_decode(buf, 26, pkt);
-	if( err == E_TYPE) printf("type \n");
-	if( err == E_LENGTH) printf("length \n");
-	if( err == E_CRC) printf("crc \n");
-	if( err == E_WINDOW) printf("window \n");
-	if( err == E_SEQNUM) printf("seqnum\n");
-	if( err == E_NOMEM) printf("nomem\n");
-	if( err == E_NOHEADER) printf("header\n");
-	if( err == PKT_OK) printf("okok \n");
-	if( err == E_UNCONSISTENT) printf("unconsistent \n");
-
-    int test = add(q,pkt);
-    if(test!=0){
-        printf("err1or");
-    }
-
-    int test2=add(q,pkt);
-    if(test2!=0){
-        printf("error");
-    }
-
-    int test3=add(q,pkt);
-    if(test3!=0){
-        printf("error");
-    }
-
-    //printf("enqueued");
-
-    printQ(q);
-    printf("la taille apres deque %d\n", q->size);
-
-    /*pkt_t *pK = pkt_new();
-    if((int)pkt_set_type(pK, PTYPE_ACK)<0){return -1;}
-    enqueue(q, pK);
-    printQ(q);*/
-
-
-
     return 0;
 }
