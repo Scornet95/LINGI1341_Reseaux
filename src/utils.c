@@ -3,7 +3,7 @@
 struct param_t getArguments(int argc, char* argv[]){
     struct param_t toRet;
     struct sockaddr_in6 host_adress;
-    int optind;
+    int optind, index;
     while ((optind = getopt(argc, argv, "m:o:")) != -1) {
 		switch (optind) {
 			case 'm':
@@ -35,6 +35,7 @@ struct param_t getArguments(int argc, char* argv[]){
             toRet.port = atoi(argv[index]);
         }
     return toRet;
+}
 }
 
 const char * real_address(const char *address, struct sockaddr_in6 *rval){
@@ -113,15 +114,18 @@ char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places
     pkt_t *pkt_ret;
     pkt_ret = pkt_new();
     char *buf = malloc(sizeof(char)*7);
+    uint8_t seqnum = pkt_get_seqnum(check_seqnum);
+    uint32_t timestamp = pkt_get_timestamp(check_seqnum);
     uint32_t crc1;
+    size_t *len = 7;
     if (verif == 1){
-        pkt_set_type
-        pkt_ret->tr = 0;
-        pkt_ret->window = places_buffer;
-        pkt_ret->length = 0;
-        pkt_ret->seqnum = check_seqnum.seqnum;
-        pkt_ret->timestamp = check_seqnum.timestamp;
-        if ((pkt_encode(pkt_ret, buf, 7)) == PKT_OK{
+        pkt_set_type(pkt_ret, 3);
+        pkt_set_tr(pkt_ret,0);
+        pkt_set_window(pkt_ret,places_buffer);
+        pkt_set_length(pkt_ret,0);
+        pkt_set_seqnum(pkt_ret,seqnum);
+        pkt_set_timestamp(pkt_ret,timestamp);
+        if ((pkt_encode(pkt_ret, buf, len)) == PKT_OK){
             return buf;
         }
         else{
@@ -129,13 +133,13 @@ char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places
         }
     }
     if (verif == 2 || verif == 3){
-        pkt_ret->type = 2;
-        pkt_ret->tr = 0;
-        pkt_ret->window = places_buffer;
-        pkt_ret->length = 0;
-        pkt_ret->seqnum = last_ack;
-        pkt_ret->timestamp = check_seqnum.timestamp;
-        if ((pkt_encode(pkt_ret, buf, 7)) == PKT_OK{
+        pkt_set_type(pkt_ret, 2);
+        pkt_set_tr(pkt_ret,0);
+        pkt_set_window(pkt_ret,places_buffer);
+        pkt_set_length(pkt_ret,0);
+        pkt_set_seqnum(pkt_ret,*last_ack);
+        pkt_set_timestamp(pkt_ret,timestamp);
+        if ((pkt_encode(pkt_ret, buf, len)) == PKT_OK){
             return buf;
         }
         else{
@@ -143,14 +147,14 @@ char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places
         }
     }
     if (verif == 0){
-        pkt_ret->type = 2;
-        pkt_ret->tr = 0;
-        pkt_ret->window = places_buffer;
-        pkt_ret->length = 0;
+        pkt_set_type(pkt_ret, 2);
+        pkt_set_tr(pkt_ret,0);
+        pkt_set_window(pkt_ret,places_buffer);
+        pkt_set_length(pkt_ret,0);
         *last_ack += 1;
-        pkt_ret->seqnum = last_ack;
-        pkt_ret->timestamp = check_seqnum.timestamp;
-        if ((pkt_encode(pkt_ret, buf, 7)) == PKT_OK{
+        pkt_set_seqnum(pkt_ret,*last_ack);
+        pkt_set_timestamp(pkt_ret,timestamp);
+        if ((pkt_encode(pkt_ret, buf, len)) == PKT_OK){
             return buf;
         }
         else{
