@@ -110,56 +110,26 @@ int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockadd
     return sockfd;
 }
 
-char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places_buffer){
+pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, int window){
     pkt_t *pkt_ret;
     pkt_ret = pkt_new();
-    char *buf = malloc(sizeof(char)*7);
-    uint8_t seqnum = pkt_get_seqnum(check_seqnum);
-    uint32_t timestamp = pkt_get_timestamp(check_seqnum);
-    size_t len = 7;
-    if (verif == 1){
+    if(ack){
+        pkt_set_type(pkt_ret, 2);
+        pkt_set_tr(pkt_ret, 0);
+        pkt_set_window(pkt_ret, window);
+        pkt_set_length(pkt_ret,0);
+        pkt_set_seqnum(pkt_ret, seqnum);
+        pkt_set_timestamp(pkt_ret, timestamp);
+        return pkt_ret;
+    }
+    else{
         pkt_set_type(pkt_ret, 3);
-        pkt_set_tr(pkt_ret,0);
-        pkt_set_window(pkt_ret,places_buffer);
-        pkt_set_length(pkt_ret,0);
-        pkt_set_seqnum(pkt_ret,seqnum);
-        pkt_set_timestamp(pkt_ret,timestamp);
-        if ((pkt_encode(pkt_ret, buf, &len)) == PKT_OK){
-            return buf;
-        }
-        else{
-            fprintf(stderr,"Error while encoding the nack response\n");
-            return NULL;
-        }
-    }
-    if (verif == 2 || verif == 3){
-        pkt_set_type(pkt_ret, 2);
-        pkt_set_tr(pkt_ret,0);
-        pkt_set_window(pkt_ret,places_buffer);
-        pkt_set_length(pkt_ret,0);
-        pkt_set_seqnum(pkt_ret,*last_ack);
-        pkt_set_timestamp(pkt_ret,timestamp);
-        if ((pkt_encode(pkt_ret, buf, &len)) == PKT_OK){
-            return buf;
-        }
-        else{
-            fprintf(stderr,"Error while encoding the ack response with different sequence numbers\n");
-        }
-    }
-    if (verif == 0){
-        pkt_set_type(pkt_ret, 2);
-        pkt_set_tr(pkt_ret,0);
-        pkt_set_window(pkt_ret,places_buffer);
-        pkt_set_length(pkt_ret,0);
-        *last_ack += 1;
-        pkt_set_seqnum(pkt_ret,*last_ack);
-        pkt_set_timestamp(pkt_ret,timestamp);
-        if ((pkt_encode(pkt_ret, buf, &len)) == PKT_OK){
-            return buf;
-        }
-        else{
-            fprintf(stderr,"Error while encoding the ack response for same sequence number\n");
-        }
+        pkt_set_tr(pkt_ret, 0);
+        pkt_set_window(pkt_ret, window);
+        pkt_set_length(pkt_ret, 0);
+        pkt_set_seqnum(pkt_ret, seqnum);
+        pkt_set_timestamp(pkt_ret, timestamp);
+        return pkt_ret;
     }
     return NULL;
 }

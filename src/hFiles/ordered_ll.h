@@ -27,6 +27,8 @@ void destroy_ll(ordered_ll *q);
 
 node * create_node();
 
+void delete_node(node *node);
+
 int printQ(ordered_ll *q);
 
 ordered_ll * create_ordered_ll();

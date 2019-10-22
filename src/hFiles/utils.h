@@ -30,9 +30,10 @@ typedef struct address_t{
     int firstGo;
     uint32_t timestamp;
     ordered_ll *buffer;
+    ordered_ll *acks;
 }address_t;
 
-int pkt_verif(pkt_t *pkt,int last_ack);
+int pkt_verif(pkt_t *pkt, int last_ack);
 
 const char * real_address(const char *address, struct sockaddr_in6 *rval);
 
@@ -40,5 +41,5 @@ struct param_t getArguments(int argc, char* argv[]);
 
 int create_socket(struct sockaddr_in6 *source_addr,int src_port,struct sockaddr_in6 *dest_addr,int dst_port);
 
-char * pkt_nack_or_ack(int verif, int * last_ack,pkt_t * check_seqnum,int places_buffer);
+pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, int window);
 #endif
