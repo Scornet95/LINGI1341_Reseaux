@@ -33,7 +33,7 @@ typedef struct address_t{
     ordered_ll *acks;
 }address_t;
 
-int pkt_verif(pkt_t *pkt, int last_ack);
+int pkt_verif(pkt_t *pkt, int last_ack, int window);
 
 const char * real_address(const char *address, struct sockaddr_in6 *rval);
 

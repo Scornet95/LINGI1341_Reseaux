@@ -60,18 +60,26 @@ const char * real_address(const char *address, struct sockaddr_in6 *rval){
     freeaddrinfo(servinfo);
     return NULL;
 }
-int pkt_verif(pkt_t *pkt, int last_ack){
+int pkt_verif(pkt_t *pkt, int last_ack, int window){
     if (pkt_get_tr(pkt) == 1){
         return 1;
+    }
+    if (pkt_get_seqnum(pkt) == last_ack){
+        return 0;
+    }
+    if(last_ack + window > 255){
+        int overflow = (last_ack + window) % 256;
+        if(pkt_get_seqnum(pkt) > last_ack || pkt_get_seqnum(pkt) < overflow){ //Le seqnum est dans la window
+            return 3;
+        }
+        else
+            return -1;
     }
     if (pkt_get_seqnum(pkt) < last_ack){
         return 2;
     }
-    if (pkt_get_seqnum(pkt) > last_ack){
+    if (pkt_get_seqnum(pkt) > last_ack && pkt_get_seqnum(pkt) < last_ack + window){
         return 3;
-    }
-    if (pkt_get_seqnum(pkt) == last_ack){
-        return 0;
     }
     else{
         fprintf(stderr,"Impossible to treat the sequence number\n");
