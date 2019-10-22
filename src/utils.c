@@ -27,8 +27,8 @@ struct param_t getArguments(int argc, char* argv[]){
     for(index = optind; index < argc; index++){
         const char *s = real_address(argv[index], &host_adress);
         if(s == NULL){
-            toRet.adress = malloc(sizeof(host_adress));
-            memcpy(toRet.adress,&host_adress,sizeof(host_adress));
+            toRet.address = malloc(sizeof(host_adress));
+            memcpy(toRet.address,&host_adress,sizeof(host_adress));
         }
         else{
             toRet.port = atoi(argv[index]);

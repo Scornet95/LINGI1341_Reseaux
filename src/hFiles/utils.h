@@ -16,14 +16,14 @@
 #include "ordered_ll.h"
 
 typedef struct param_t{
-    struct sockaddr_in6 *adress;
+    struct sockaddr_in6 *address;
     int port;
     char* format;
     int maxCo;
 }param_t;
 
 typedef struct address_t{
-    struct sockaddr_in6 *adress;
+    struct sockaddr_in6 *address;
     int last_ack;
     int fd;
     int window;
@@ -42,4 +42,9 @@ struct param_t getArguments(int argc, char* argv[]);
 int create_socket(struct sockaddr_in6 *source_addr,int src_port,struct sockaddr_in6 *dest_addr,int dst_port);
 
 pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, int window);
+
+int sendQueue(int sockfd, address_t* addie);
+
+int emptyBuffer(address_t* add);
+
 #endif

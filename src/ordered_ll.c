@@ -86,10 +86,9 @@ void enqueue(ordered_ll *q, pkt_t *pkt){
     }
 }
 
-
-void delete_node(node *node){
-    free(node->pkt);
-    free(node);
+void delete_node(node *n){
+    free(n->pkt);
+    free(n);
 }
 int add(ordered_ll * q, pkt_t *pkt){
     if(q==NULL){return -1;}
@@ -135,6 +134,7 @@ int add(ordered_ll * q, pkt_t *pkt){
 pkt_t * retrieve(ordered_ll * q){
     if (q->size == 0){
         fprintf(stderr, "There is nothing in the queue\n");
+        return NULL;
     }
     pkt_t * new_pkt;
     new_pkt = q->front->pkt;
@@ -147,10 +147,10 @@ pkt_t * retrieve(ordered_ll * q){
         return new_pkt;
     }
     else{
-        node * n;
-        n = q->front;
-        q->front = q->front->next;
+        node * n = q->front;
+        q->front = n->next;
         q->size = q->size - 1;
+        delete_node(n);
         return new_pkt;
     }
 }
