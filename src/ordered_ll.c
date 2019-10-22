@@ -70,6 +70,9 @@ void enqueue(ordered_ll *q, pkt_t *pkt){
         }
         int new_seqnum = pkt_get_seqnum(pkt);
         int actual_seqnum = pkt_get_seqnum(q->front->pkt);
+        if (actual_seqnum > 223 & new_seqnum < 31){
+            new_seqnum = new_seqnum + 256;
+        }
         if (new_seqnum >= actual_seqnum){
             node *new_node = create_node();
             new_node->pkt = pkt;
@@ -90,12 +93,19 @@ void delete_node(node *n){
     free(n->pkt);
     free(n);
 }
-int add(ordered_ll * q, pkt_t *pkt){
+int add(ordered_ll * q, pkt_t *pkt, int lastAck){
     if(q==NULL){return -1;}
     if(pkt==NULL){return -2;}
     int check_seqnum;
     int actual_seqnum;
     node * new_node = create_node();
+    actual_seqnum = pkt_get_seqnum(pkt);
+    if (lastAck > actual_seqnum){
+        new_node->index = actual_seqnum + 256;
+    }
+    else{
+        new_node->index = actual_seqnum;
+    }
     new_node->pkt = pkt;
     if (q->front == NULL){
         q->front = new_node;
@@ -103,22 +113,21 @@ int add(ordered_ll * q, pkt_t *pkt){
         return 0;
     }
     node * current = q->front;
-    actual_seqnum = pkt_get_seqnum(pkt);
-    if (current->pkt->seqnum == actual_seqnum){
+    if (current->pkt->seqnum == new_node->index){
         return -1;
     }
-    if (current->pkt->seqnum > actual_seqnum){
+    if (current->pkt->seqnum > new_node->index){
         new_node->next = current;
         q->front = new_node;
         q->size++;
         return 0;
     }
     while(current->next != NULL){
-        check_seqnum = pkt_get_seqnum(current->next->pkt);
-        if (check_seqnum == actual_seqnum){
+        check_seqnum = current->next->index;
+        if (check_seqnum == new_node->index){
             return -1;
         }
-        if (check_seqnum > actual_seqnum){
+        if (check_seqnum > new_node->index){
             new_node->next = current->next;
             current->next = new_node;
             q->size++;
