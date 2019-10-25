@@ -80,6 +80,8 @@ void testAckEncode(){
 
     pkt = ackEncode(seqnum, timestamp, 0, window);
 
+    printPkt(pkt);
+
     if(pkt_get_type(pkt) != 3)
         printf("a NACK should always hava a type of 3\n");
 
@@ -112,13 +114,51 @@ void testEnqueue(){
     ordered_ll* q = create_ordered_ll();
 
     for(int i = 0; i < 10 ; i++){
-        
+        if(i % 2 == 0)
+            enqueue(q, ack);
+        else
+            enqueue(q, nack);
     }
+    if(q->size != 10)
+        printf("error in updating the size of the queue\n");
+    printQ(q);
+    destroy_ll(q);
+}
+
+void testRetrieve(){
+    uint8_t seqnum = (uint8_t) 123;
+    uint32_t timestamp = (uint32_t) 12345;
+    uint8_t window = (uint8_t) 30;
+
+    pkt_t* ack = ackEncode(seqnum, timestamp, 1, window);
+    pkt_t* nack = ackEncode(seqnum, timestamp, 0, window);
+
+    ordered_ll* q = create_ordered_ll();
+
+    for(int i = 0; i < 10 ; i++){
+        if(i % 2 == 0)
+            enqueue(q, ack);
+        else
+            enqueue(q, nack);
+    }
+    pkt_t* retrieved;
+
+    while(q->size > 0){
+        retrieved = retrieve(q);
+        printPkt(retrieved);
+    }
+    destroy_ll(q);
 }
 
 int main(){
     printf("Starting the test suite on ordered_ll\n\n");
     printf("testing ackEncode\n\n");
     testAckEncode();
+
+    printf("Starting the test suite on enqueue\n\n");
+    testEnqueue();
+
+    printf("Starting the test suite on retrieve\n\n");
+    testRetrieve();
     return EXIT_SUCCESS;
 }

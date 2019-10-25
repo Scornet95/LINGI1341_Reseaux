@@ -1,10 +1,10 @@
 CC=gcc
 
-CFLAGS= -Wall -g -Wextra -I src/hFiles -lz
+CFLAGS= -Wall -g -Wextra -I src/hFiles 
 LDFLAGS = -lz
 
 OBJ= packet_interface.o utils.o ordered_ll.o
-SRC= src/packet_interface.c src/utils.c src/ordered_ll.c
+SRC= src/packet_interface.c src/ordered_ll.c src/utils.c
 TESTSRC= tests/testOrderedLL.c
 
 

@@ -100,6 +100,7 @@ pkt_t * retrieve(ordered_ll * q){
         q->size = 0;
         pkt_t* toRet = n->pkt;
         free(q->front);
+        q->front = NULL;
         return toRet;
     }
     else{
@@ -112,26 +113,30 @@ pkt_t * retrieve(ordered_ll * q){
 }
 
 void destroy_ll(ordered_ll *q){
-    if (q == NULL){
+    if (q->size == 0){
         free(q);
+        q = NULL;
         return;
     }
     else{
+        pkt_t* pkt;
         while(q->size != 0){
-            free(retrieve(q));
+            pkt = retrieve(q);
+            pkt_del(pkt);
         }
     }
     free(q);
+    q = NULL;
     return;
 }
 
 
-int printQ(ordered_ll *q){
+void printQ(ordered_ll *q){
     if(q == NULL){
         printf("The list is NULL, nothing to print\n");
-        return 1;
+        return;
     }
-    if(q->front != NULL){
+    if(q->front != NULL && q->size > 0){
         node* runner = q->front;
 
         while(runner != NULL){
@@ -140,11 +145,11 @@ int printQ(ordered_ll *q){
         }
     }
     else
-        printf("The first node is NULL, nothing to print\n");
+        printf("The first node is NULL or the size is 0, nothing to print\n");
 }
 uint8_t peek(ordered_ll *list){
-    if(list->front == NULL){
-        return -1;
+    if(list->size == 0){
+        exit(EXIT_FAILURE);
     }
     return pkt_get_seqnum((list->front)->pkt);
 }

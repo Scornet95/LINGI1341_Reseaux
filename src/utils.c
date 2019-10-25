@@ -1,5 +1,5 @@
-#include "packet_interface.h"
 #include "utils.h"
+
 struct param_t getArguments(int argc, char* argv[]){
     struct param_t toRet;
     struct sockaddr_in6 host_adress;
@@ -153,7 +153,7 @@ void printPkt(pkt_t* pkt){
     printf("window : %u\n", pkt_get_window(pkt));
     printf("length : %u\n", pkt_get_length(pkt));
     printf("seqnum : %u\n", pkt_get_seqnum(pkt));
-    char* payload = pkt_get_payload(pkt);
+    const char* payload = pkt_get_payload(pkt);
     printf("payload : \n");
 
     for(int i = 0; i < pkt_get_length(pkt); i++){

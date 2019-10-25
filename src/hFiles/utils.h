@@ -1,5 +1,5 @@
-#ifndef __UTILS_H
-#define __UTILS_H
+#ifndef __UTILS_H_
+#define __UTILS_H_
 
 #include <netinet/in.h> /* * sockaddr_in6 */
 #include <sys/types.h> /* Voir NOTES */
@@ -14,24 +14,8 @@
 
 #include "packet_interface.h"
 #include "ordered_ll.h"
+#include "structs.h"
 
-typedef struct param_t{
-    struct sockaddr_in6 *address;
-    int port;
-    char* format;
-    int maxCo;
-}param_t;
-
-typedef struct address_t{
-    struct sockaddr_in6 *address;
-    int last_ack;
-    int fd;
-    int window;
-    int firstGo;
-    uint32_t timestamp;
-    ordered_ll *buffer;
-    ordered_ll *acks;
-}address_t;
 
 int pkt_verif(pkt_t *pkt, int last_ack, int window);
 
