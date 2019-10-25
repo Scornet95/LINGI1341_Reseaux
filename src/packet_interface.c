@@ -1,4 +1,4 @@
-#include "packet_interface.h"
+ #include "packet_interface.h"
 #include <stdlib.h>
 #include <zlib.h>
 #include <arpa/inet.h>
@@ -18,7 +18,8 @@ pkt_t* pkt_new()
 void pkt_del(pkt_t *pkt)
 {
     if(pkt != NULL){
-        free(pkt->payload);
+        if(pkt->payload != NULL)
+            free(pkt->payload);
         free(pkt);
     }
 }

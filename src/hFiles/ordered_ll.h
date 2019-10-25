@@ -5,21 +5,17 @@
 #include <stdio.h>
 #include "packet_interface.h"
 
-
-typedef struct node node;
-
-typedef struct queue ordered_ll;
-
-struct queue{
-    node *front;
-    int size;
-};
-
-struct node{
+typedef struct node{
     pkt_t * pkt;
     struct node *next;
     int index;
-};
+}node;
+
+typedef struct queue{
+    node *front;
+    int size;
+}ordered_ll;
+
 
 void enqueue(ordered_ll *q, pkt_t *pkt);
 

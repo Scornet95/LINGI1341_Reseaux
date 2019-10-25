@@ -60,6 +60,7 @@ const char * real_address(const char *address, struct sockaddr_in6 *rval){
     freeaddrinfo(servinfo);
     return NULL;
 }
+
 int pkt_verif(pkt_t *pkt, int last_ack, int window){
     if (pkt_get_tr(pkt) == 1){
         return 1;
@@ -118,7 +119,7 @@ int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockadd
     return sockfd;
 }
 
-pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, int window){
+pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, uint8_t window){
     pkt_t *pkt_ret;
     pkt_ret = pkt_new();
     if(ack){
