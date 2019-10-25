@@ -102,7 +102,18 @@ void testAckEncode(){
 }
 
 void testEnqueue(){
-    
+    uint8_t seqnum = (uint8_t) 123;
+    uint32_t timestamp = (uint32_t) 12345;
+    uint8_t window = (uint8_t) 30;
+
+    pkt_t* ack = ackEncode(seqnum, timestamp, 1, window);
+    pkt_t* nack = ackEncode(seqnum, timestamp, 0, window);
+
+    ordered_ll* q = create_ordered_ll();
+
+    for(int i = 0; i < 10 ; i++){
+        
+    }
 }
 
 int main(){

@@ -156,7 +156,7 @@ void printPkt(pkt_t* pkt){
     char* payload = pkt_get_payload(pkt);
     printf("payload : \n");
 
-    for(int i; i < pkt_get_length(pkt); i++){
+    for(int i = 0; i < pkt_get_length(pkt); i++){
         printf("%c", *(payload + i));
     }
     printf("\n");

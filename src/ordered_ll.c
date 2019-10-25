@@ -27,12 +27,15 @@ void enqueue(ordered_ll *q, pkt_t *pkt){
         q->front = n;
         q->size = 1;
     }
-    else{
+    else if(q->front != NULL){
         node* n = q->front;
         while(n->next != NULL)
             n = n->next;
         n->next = create_node(pkt);
         q->size = q->size + 1;
+    }
+    else{
+        printf("size of the q is not 0 but the head of the q is NULL\n");
     }
 }
 
