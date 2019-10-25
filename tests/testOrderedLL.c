@@ -103,26 +103,84 @@ void testAckEncode(){
     pkt_del(pkt);
 }
 
-void testEnqueue(){
-    uint8_t seqnum = (uint8_t) 123;
-    uint32_t timestamp = (uint32_t) 12345;
-    uint8_t window = (uint8_t) 30;
+void testAdd(){
+    pkt_t * pkt_1 = pkt_new();
+    pkt_set_tr(pkt_1, 0);
+    pkt_set_type(pkt_1, 1);
+    pkt_set_window(pkt_1, 31);
+    pkt_set_length(pkt_1, 4);
+    pkt_set_timestamp(pkt_1, 127);
+    pkt_set_seqnum(pkt_1, 1);
+    char buf[4];
+    buf[0] = 'A';
+    buf[1] = 'B';
+    buf[2] = 'C';
+    buf[3] = 'D';
+    pkt_set_payload(pkt_1,buf, 4);
 
-    pkt_t* ack = ackEncode(seqnum, timestamp, 1, window);
-    pkt_t* nack = ackEncode(seqnum, timestamp, 0, window);
-
-    ordered_ll* q = create_ordered_ll();
-
-    for(int i = 0; i < 10 ; i++){
-        if(i % 2 == 0)
-            enqueue(q, ack);
-        else
-            enqueue(q, nack);
+    pkt_t * pkt_2 = pkt_new();
+    pkt_set_tr(pkt_2, 0);
+    pkt_set_type(pkt_2, 1);
+    pkt_set_window(pkt_2, 31);
+    pkt_set_length(pkt_2, 130);
+    pkt_set_timestamp(pkt_2, 127);
+    pkt_set_seqnum(pkt_2, 255);
+    char *buf_2 = malloc(sizeof(char)*130);
+    for (int i = 0; i < 130; i++) {
+        if (i == 129){
+            buf_2[i] = 'B';
+        }
+        else{
+            buf_2[i] = 'A';
+        }
     }
-    if(q->size != 10)
-        printf("error in updating the size of the queue\n");
-    printQ(q);
-    destroy_ll(q);
+    pkt_set_payload(pkt_2,buf_2,130);
+
+    pkt_t * pkt_3 = pkt_new();
+    pkt_set_tr(pkt_3, 0);
+    pkt_set_type(pkt_3, 1);
+    pkt_set_window(pkt_3, 31);
+    pkt_set_length(pkt_3, 4);
+    pkt_set_timestamp(pkt_3, 127);
+    pkt_set_seqnum(pkt_3, 0);
+    char buf_3[4];
+    buf_3[0] = 'A';
+    buf_3[1] = 'B';
+    buf_3[2] = 'C';
+    buf_3[3] = 'D';
+    pkt_set_payload(pkt_3,buf_3, 4);
+
+    pkt_t * pkt_4 = pkt_new();
+    pkt_set_tr(pkt_4, 0);
+    pkt_set_type(pkt_4, 1);
+    pkt_set_window(pkt_4, 31);
+    pkt_set_length(pkt_4, 4);
+    pkt_set_timestamp(pkt_4, 127);
+    pkt_set_seqnum(pkt_4, 254);
+    char buf_4[4];
+    buf_4[0] = 'A';
+    buf_4[1] = 'B';
+    buf_4[2] = 'C';
+    buf_4[3] = 'D';
+    pkt_set_payload(pkt_4,buf_4, 4);
+
+
+    ordered_ll * queue = create_ordered_ll();
+    if (add(queue,pkt_1,253) != 0){
+        printf("problème avec le add");
+    }
+    if (add(queue,pkt_2,253) != 0){
+        printf("problème avec le add pkt_2");
+    }
+    if (add(queue,pkt_3,253) != 0){
+        printf("problème avec le add");
+    }
+    if (add(queue,pkt_4,253) != 0){
+        printf("problème avec le add pkt_2");
+    }
+    if (printQ(queue) == 0){
+        printf("réussi");
+    }
 }
 
 void testRetrieve(){
@@ -153,12 +211,6 @@ void testRetrieve(){
 int main(){
     printf("Starting the test suite on ordered_ll\n\n");
     printf("testing ackEncode\n\n");
-    testAckEncode();
-
-    printf("Starting the test suite on enqueue\n\n");
-    testEnqueue();
-
-    printf("Starting the test suite on retrieve\n\n");
-    testRetrieve();
+    testAdd();
     return EXIT_SUCCESS;
 }
