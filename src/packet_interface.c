@@ -7,6 +7,7 @@
 /* Extra code */
 /* Your code will be inserted here */
 
+
 pkt_t* pkt_new()
 {
     pkt_t* pkt = malloc(sizeof(pkt_t));
@@ -155,7 +156,7 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     byte = ((uint8_t) type) << 6;
     byte += tr << 5;
     byte += window;
-    buf[index] = byte;
+    buf[index] = (char) byte;
 
     index++; //L'index est à 1, l'adresse pointe vers le premier byte de length.
 
