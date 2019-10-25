@@ -66,7 +66,7 @@ int add(ordered_ll * q, pkt_t *pkt, int lastAck){
     if (current->pkt->seqnum == new_node->index){
         return -1;
     }
-    if (current->pkt->seqnum > new_node->index){
+    if (current->index > new_node->index){
         new_node->next = current;
         q->front = new_node;
         q->size++;
