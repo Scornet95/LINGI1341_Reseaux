@@ -1,7 +1,6 @@
 *.o
 receiver
-receiver.dSYM/
 test
-src/chat.dSYM/
-src/a.out
+*a.out
+*.dSYM
 zeb
