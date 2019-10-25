@@ -155,7 +155,7 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     byte = ((uint8_t) type) << 6;
     byte += tr << 5;
     byte += window;
-    buf[index] = (char) byte;
+    buf[index] = byte;
 
     index++; //L'index est à 1, l'adresse pointe vers le premier byte de length.
 

@@ -25,7 +25,7 @@ void enqueue(ordered_ll *q, pkt_t *pkt);
 
 void destroy_ll(ordered_ll *q);
 
-node * create_node();
+node * create_node(pkt_t* pkt);
 
 void delete_node(node *node);
 

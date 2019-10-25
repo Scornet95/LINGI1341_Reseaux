@@ -1,0 +1,712 @@
+commit d341ea790d74abf00dd7840ecdf310191ed8c810
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Tue Oct 22 12:34:02 2019 +0200
+
+    tiens
+
+ .gitignore            |  1 +
+ src/hFiles/receiver.h |  1 +
+ src/hFiles/utils.h    |  2 +-
+ src/ordered_ll.c      | 19 ++++++++++---------
+ src/receiver.c        | 41 ++++++++++++++++++++++-------------------
+ src/utils.c           | 18 +++++++++++++-----
+ 6 files changed, 48 insertions(+), 34 deletions(-)
+
+commit 6b95dc8e8adbf7e9ee4acc60a029b960d60b8712
+Merge: 10313c4 9cef96f
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Tue Oct 22 03:31:00 2019 +0200
+
+    Merge branch 'master' of github.com:Scornet95/LINGI1341_Reseaux
+    successful commit I guess
+
+commit 9cef96f5b13e7c8be16ecaa4055d72647687d62a
+Merge: eea5d8d 1602d28
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Tue Oct 22 03:29:27 2019 +0200
+
+    Merge branch 'master' of https://github.com/Scornet95/LINGI1341_Reseaux
+
+commit eea5d8d4d3d4d75c65a08c826baaa203b79e7a42
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Tue Oct 22 03:24:14 2019 +0200
+
+    Dernière fonction de la linked list sa mère
+
+ src/hFiles/ordered_ll.h |  9 ++++--
+ src/ordered_ll.c        | 84 ++++++++++++++++++++++++++++++++++---------------
+ 2 files changed, 65 insertions(+), 28 deletions(-)
+
+commit 10313c4539c5c56b59ef0258458b5f0b715c68eb
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Tue Oct 22 03:23:33 2019 +0200
+
+    fini trtp pour 1 sender, pas encore testé
+
+ src/hFiles/utils.h |  9 +++++++--
+ src/ordered_ll.c   | 14 +++++++-------
+ src/receiver.c     | 49 ++++++++++++++++++++++++++++++++++++-------------
+ src/utils.c        |  4 ++--
+ 4 files changed, 52 insertions(+), 24 deletions(-)
+
+commit 1602d2870d27715b18b0008950a213b9c607f96b
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Tue Oct 22 01:29:20 2019 +0200
+
+    fonctions annexes ajoutées
+
+ src/hFiles/ordered_ll.h |  6 ++++-
+ src/hFiles/receiver.h   |  1 +
+ src/ordered_ll.c        | 65 +++++++++++++++++++++++++++++++++----------------
+ src/receiver.c          | 30 ++++++++++++++++++++---
+ src/utils.c             |  1 -
+ 5 files changed, 77 insertions(+), 26 deletions(-)
+
+commit cb17fdd9c9aec3ec0137bfe3db1ce1be9665ab2e
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 22:20:50 2019 +0200
+
+    arrête avec tes enroules de mac wesh
+
+ .gitignore                                  |   3 +++
+ receiver.dSYM/Contents/Info.plist           |  20 --------------------
+ src/a.out                                   | Bin 18552 -> 0 bytes
+ src/chat.dSYM/Contents/Info.plist           |  20 --------------------
+ src/chat.dSYM/Contents/Resources/DWARF/chat | Bin 21279 -> 0 bytes
+ 5 files changed, 3 insertions(+), 40 deletions(-)
+
+commit 72d0a27e62901ea11cabf180bdcb532d0cd725cd
+Merge: 8d72680 d49885e
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 22:12:54 2019 +0200
+
+    Merge branch 'master' of github.com:Scornet95/LINGI1341_Reseaux
+
+commit 8d7268068c77e83c9e31e2ef9670c0898fe5c2c4
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 22:12:43 2019 +0200
+
+    début du trtp avec un seul sender
+
+ src/hFiles/utils.h |  5 +++--
+ src/receiver.c     | 19 ++++++++++++++++--
+ src/utils.c        | 59 ++++++++++++++----------------------------------------
+ 3 files changed, 35 insertions(+), 48 deletions(-)
+
+commit d49885e44356696565fdc691caef5de31bf98106
+Merge: 07d463c 2aca891
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Mon Oct 21 22:10:51 2019 +0200
+
+    Ajout de la fonction en queue
+
+commit 07d463ca4e57cafa3662ef41b748167dab5a2fad
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Mon Oct 21 22:08:49 2019 +0200
+
+    Ajout de la fonction en queue
+
+ receiver.dSYM/Contents/Info.plist           |  20 ++++
+ src/a.out                                   | Bin 0 -> 18552 bytes
+ src/chat.dSYM/Contents/Info.plist           |  20 ++++
+ src/chat.dSYM/Contents/Resources/DWARF/chat | Bin 0 -> 21279 bytes
+ src/ordered_ll.c                            | 153 ++++++++++++----------------
+ 5 files changed, 107 insertions(+), 86 deletions(-)
+
+commit 2aca89148958226afebd842f54c3ea3429822d06
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 20:50:17 2019 +0200
+
+    j'ai retiré ta vieille main de zeub
+
+ src/hFiles/ordered_ll.h |  1 -
+ src/ordered_ll.c        | 77 -------------------------------------------------
+ src/receiver.c          |  7 ++++-
+ 3 files changed, 6 insertions(+), 79 deletions(-)
+
+commit 0393a8e63947de114ce5b463772508e3737fb0ac
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Mon Oct 21 20:48:22 2019 +0200
+
+    Working linked list
+
+ src/hFiles/ordered_ll.h |  34 +++++---
+ src/ordered_ll.c        | 204 ++++++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 184 insertions(+), 54 deletions(-)
+
+commit 76066a87cb51505c42eb3080067ca91d85d94d07
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 20:44:46 2019 +0200
+
+    ajouté le champ timestamp à la structure
+
+ src/hFiles/utils.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 6ccbbbab48a693a0d7799dc1e8f0cae05766c509
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 20:38:22 2019 +0200
+
+    pas mal de modifs
+
+ Makefile                      |  4 ++--
+ src/hFiles/ordered_ll.h       |  2 ++
+ src/hFiles/packet_interface.h | 12 ++++++++++++
+ src/hFiles/receiver.h         |  1 +
+ src/hFiles/utils.h            | 12 +++++++-----
+ src/packet_interface.c        | 11 -----------
+ src/receiver.c                | 39 ++++++++++++++++++++++++++++++++-------
+ src/utils.c                   |  2 +-
+ 8 files changed, 57 insertions(+), 26 deletions(-)
+
+commit 00e7519094ab7ab9f32dde7326215d0b65cb4fef
+Merge: 90c6afe 2f59aed
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 14:54:07 2019 +0200
+
+    Merge branch 'master' of github.com:Scornet95/LINGI1341_Reseaux
+
+commit 90c6afe39ba2957426a60a922b79e4eaa37d1bc3
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 14:54:00 2019 +0200
+
+    receiver fonctionne avec une seule co
+
+ src/receiver.c | 14 +++++++++-----
+ src/utils.c    |  8 ++++----
+ 2 files changed, 13 insertions(+), 9 deletions(-)
+
+commit 2f59aed6e14c37c0af4467f4dcd59569b2aa50a0
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Mon Oct 21 14:52:20 2019 +0200
+
+    New ordered linked list
+
+ src/hFiles/ordered_ll.h | 24 ++++++++++++++++++
+ src/ordered_ll.c        | 67 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 91 insertions(+)
+
+commit 85d93bd2c5c6db2a1c2d375d7657ffbbe8baddc8
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Mon Oct 21 14:50:16 2019 +0200
+
+    New ordered linked list
+
+ Outils/queue.c     | 0
+ src/hFiles/queue.h | 0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 95c2462f5b39c2f86da6577a838e09b1952b5e6f
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 13:56:06 2019 +0200
+
+    apprends à coder serge
+
+ src/utils.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+commit 34bdda49186f7fd7cd80d9ba3d76915fd214ba50
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 13:52:28 2019 +0200
+
+    apple commence à m'user sérieusement
+
+ packet_interface.o                              | Bin 18444 -> 0 bytes
+ receiver                                        | Bin 26472 -> 0 bytes
+ receiver.dSYM/Contents/Info.plist               |  20 --------------------
+ receiver.dSYM/Contents/Resources/DWARF/receiver | Bin 25549 -> 0 bytes
+ utils.o                                         | Bin 12324 -> 0 bytes
+ 5 files changed, 20 deletions(-)
+
+commit 996a00025bb195fcf2c2680c60dba0fa9a7422b3
+Merge: cf5686a 0d28625
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 13:49:57 2019 +0200
+
+    fixed merge
+
+commit cf5686a02d375d714191e3ba3064df5c7f4b33e6
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 13:48:53 2019 +0200
+
+    added gitignore
+
+ .gitignore  | 2 ++
+ src/utils.c | 8 ++++----
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+commit 0d286259ad001e7c09bd9d9ce82391f392c93ddc
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Mon Oct 21 13:40:07 2019 +0200
+
+    succes in compilation of function ack & nack
+
+ Outils/queue.c                                  |   0
+ packet_interface.o                              | Bin 0 -> 18444 bytes
+ receiver                                        | Bin 0 -> 26472 bytes
+ receiver.dSYM/Contents/Info.plist               |  20 ++++++++++++++++++++
+ receiver.dSYM/Contents/Resources/DWARF/receiver | Bin 0 -> 25549 bytes
+ src/hFiles/queue.h                              |   0
+ utils.o                                         | Bin 0 -> 12324 bytes
+ 7 files changed, 20 insertions(+)
+
+commit 66086d18eb07de4b3e5d4dcea432e551b34fc215
+Merge: 7f2512a 2e49242
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Mon Oct 21 12:36:27 2019 +0200
+
+    succes in compilation of function ack & nack
+
+commit 2e49242d44681d185d715cc241c802ab1285d2ae
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 12:21:20 2019 +0200
+
+    bug à cause du merge
+
+ src/utils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 7f2512a7a615b6e9a1bc07adc7422fc6546005a5
+Merge: 74864d7 614a2e9
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Mon Oct 21 12:18:38 2019 +0200
+
+    Merge branch 'master' of https://github.com/Scornet95/LINGI1341_Reseaux
+
+commit 74864d7da48e1013d7ffb820b002160fe3a6f6d6
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Mon Oct 21 12:18:35 2019 +0200
+
+    Ack Nack function
+
+ src/hFiles/utils.h |  1 +
+ src/utils.c        | 11 ++++++-----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+commit 614a2e9b8bdaf9772a2433c220f9d7d56d9efe9c
+Merge: 093b347 fb3e708
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 12:17:50 2019 +0200
+
+    fixed merge
+
+commit 093b3470ad341907efb4f303602bc8bdc8252dfd
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 12:16:25 2019 +0200
+
+    removed some files
+
+ packet_interface.c | 420 -----------------------------------------------------
+ packet_interface.h | 177 ----------------------
+ src/receiver.c     |   5 +
+ src/utils.c        |   7 +-
+ 4 files changed, 6 insertions(+), 603 deletions(-)
+
+commit fb3e70811044a374c05bac986c4c7ed174f062b2
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Mon Oct 21 10:17:45 2019 +0200
+
+    add pointer to last ack
+
+ src/utils.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 8ab29e5d12c373e42974b17b1560f05dc70fb6e0
+Author: Serge Cornet <serge_cornet@wifi-student7-829.sri.ucl.ac.be>
+Date:   Mon Oct 21 10:13:59 2019 +0200
+
+    function ack nack finished
+
+ src/utils.c | 106 +++++++++++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 84 insertions(+), 22 deletions(-)
+
+commit edc19de2c863554645e3a34786cf65eff8f8416f
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 10:00:28 2019 +0200
+
+    fixed the args bug
+
+ src/utils.c | 39 +++++++++++++++++++--------------------
+ 1 file changed, 19 insertions(+), 20 deletions(-)
+
+commit 1acda5e5c06a5f79f2c7ce75e06918de3614eb78
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 09:29:24 2019 +0200
+
+    compilation error update
+
+ src/utils.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
+
+commit 1444843c65b42ae948048f313fbe954ddf629a87
+Merge: 176bc05 528bbb4
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 09:24:45 2019 +0200
+
+    fixed merge
+
+commit 176bc050052b1875c8dcf07f515fe61984859039
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 21 09:23:40 2019 +0200
+
+    début du vrai projet
+
+ Makefile                      |  24 +++
+ src/hFiles/packet_interface.h | 177 ++++++++++++++++++
+ src/hFiles/receiver.h         |  11 ++
+ src/hFiles/utils.h            |   8 +-
+ src/packet_interface.c        | 420 ++++++++++++++++++++++++++++++++++++++++++
+ src/receiver.c                |  39 ++++
+ src/utils.c                   |  59 ++++--
+ 7 files changed, 723 insertions(+), 15 deletions(-)
+
+commit 528bbb49bcd9cd4488c8afe5aa8be5b5bd1b1326
+Author: Serge Cornet <serge_cornet@MacBook-Pro-de-Serge.local>
+Date:   Sat Oct 19 15:00:48 2019 +0200
+
+    Utils.c Malloc format
+
+ src/utils.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit 29338e60939f22e1dbe44f2565810cd81bb3b072
+Author: Serge Cornet <serge_cornet@MacBook-Pro-de-Serge.local>
+Date:   Sat Oct 19 14:58:08 2019 +0200
+
+    retrieving arguments in utils.c
+
+ src/utils.c | 55 +++++++++++++++++++++----------------------------------
+ 1 file changed, 21 insertions(+), 34 deletions(-)
+
+commit e880d233df22abd5c393af08491b422b7c2b7561
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Sat Oct 19 14:45:37 2019 +0200
+
+    ajouté la fonction create socket
+
+ src/utils.c | 39 ++++++++++++++++++++++++++++++++-------
+ 1 file changed, 32 insertions(+), 7 deletions(-)
+
+commit 14ff29e18aa66a2606d15a95f6d14f31283f7ef4
+Author: Serge Cornet <serge_cornet@MacBook-Pro-de-Serge.local>
+Date:   Sat Oct 19 14:35:36 2019 +0200
+
+    New function pkt_verif
+
+ src/hFiles/utils.h |  8 ++++++++
+ src/utils.c        | 16 +++++++++++++++-
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+commit 346e84c0e6111394762edb2e9ee4ae88cc466357
+Author: Serge Cornet <serge_cornet@MacBook-Pro-de-Serge.local>
+Date:   Sat Oct 19 14:11:53 2019 +0200
+
+    Nouveau packet_interface
+
+ packet_interface.c | 420 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 420 insertions(+)
+
+commit bdb6084fbb6a94d15786ee480cd8e972228cfc69
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Sat Oct 19 14:08:53 2019 +0200
+
+    supprimé d'anciennes versions du code packet_implem
+
+ final.c              | 420 -------------------------------------------
+ packet_implem.c      | 458 -----------------------------------------------
+ packet_implem_test.c | 489 ---------------------------------------------------
+ 3 files changed, 1367 deletions(-)
+
+commit 7c84386a4ae574fd2384c5df35b3def540cf03fb
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Sat Oct 19 12:37:37 2019 +0200
+
+    tqt
+
+ Outils/src/real_address.c |  6 ------
+ src/hFiles/utils.h        | 25 ++++++++++++++++++++++
+ src/receiver.c            |  1 +
+ src/utils.c               | 54 +++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 80 insertions(+), 6 deletions(-)
+
+commit ce1c1229b3ca3f6c0631ed19de693202e1a8f6d0
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Fri Oct 18 13:03:31 2019 +0200
+
+    chat fonctionne, 100% inginious
+
+ Outils/Makefile                       |  24 +++++++++++
+ Outils/chat                           | Bin 0 -> 27608 bytes
+ Outils/create_socket.c                |  44 --------------------
+ Outils/create_socket.o                | Bin 0 -> 10304 bytes
+ Outils/hFiles/create_socket.h         |  20 +++++++++
+ Outils/{ => hFiles}/read_write_loop.h |   0
+ Outils/{ => hFiles}/real_address.h    |   0
+ Outils/{ => hFiles}/wait_for_client.h |   0
+ Outils/read_write_loop.c              |  63 ----------------------------
+ Outils/read_write_loop.o              | Bin 0 -> 7744 bytes
+ Outils/real_address.c                 |  30 --------------
+ Outils/real_address.o                 | Bin 0 -> 11072 bytes
+ Outils/src/chat.c                     |  75 ++++++++++++++++++++++++++++++++++
+ Outils/src/create_socket.c            |  44 ++++++++++++++++++++
+ Outils/src/read_write_loop.c          |  51 +++++++++++++++++++++++
+ Outils/src/real_address.c             |  41 +++++++++++++++++++
+ Outils/{ => src}/wait_for_client.c    |   5 +--
+ Outils/wait_for_client.o              | Bin 0 -> 9144 bytes
+ 18 files changed, 257 insertions(+), 140 deletions(-)
+
+commit 543b13c80fb140d9be16d42d2f52270f9c29a0b8
+Author: Serge Cornet <serge_cornet@wifi-student7-792.sri.ucl.ac.be>
+Date:   Thu Oct 17 13:00:35 2019 +0200
+
+    New file with exo inginious
+
+ Outils/create_socket.c   | 44 +++++++++++++++++++++++++++++++++
+ Outils/create_socket.h   | 20 +++++++++++++++
+ Outils/read_write_loop.c | 63 ++++++++++++++++++++++++++++++++++++++++++++++++
+ Outils/read_write_loop.h | 11 +++++++++
+ Outils/real_address.c    | 30 +++++++++++++++++++++++
+ Outils/real_address.h    | 17 +++++++++++++
+ Outils/wait_for_client.c | 35 +++++++++++++++++++++++++++
+ Outils/wait_for_client.h | 13 ++++++++++
+ 8 files changed, 233 insertions(+)
+
+commit b3d62480e73d711f6afe6e368d757d509ccf71e4
+Merge: 6ca47b5 9fe040c
+Author: Serge Cornet <serge_cornet@wifi-student7-792.sri.ucl.ac.be>
+Date:   Thu Oct 17 12:59:22 2019 +0200
+
+    New file with exo inginious
+
+commit 6ca47b53ca771d4df003a2214ec515745b230b1f
+Author: Serge Cornet <serge_cornet@wifi-student7-792.sri.ucl.ac.be>
+Date:   Thu Oct 17 12:58:21 2019 +0200
+
+    New file with inginious exo
+
+ create_socket.c | 44 --------------------------------------------
+ create_socket.h | 20 --------------------
+ real_address.c  | 30 ------------------------------
+ real_address.h  | 17 -----------------
+ 4 files changed, 111 deletions(-)
+
+commit 9fe040c400ac5271781c8534650f5fa5b0fe4d8b
+Merge: 1750389 c359609
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Thu Oct 17 12:56:50 2019 +0200
+
+    Merge branch 'master' of github.com:Scornet95/LINGI1341_Reseaux
+
+commit 1750389cca0c9fba619d8d6961a7bad76ef2b4bf
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Thu Oct 17 12:56:34 2019 +0200
+
+    tqt
+
+ packet_implem.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
+
+commit c35960934523f47622b2a3168bfb7d24e527c6c7
+Author: Serge Cornet <serge_cornet@wifi-student7-792.sri.ucl.ac.be>
+Date:   Thu Oct 17 11:33:37 2019 +0200
+
+    10% au envoyer des structures
+
+ create_socket.c | 19 ++++++++++---------
+ real_address.c  | 25 ++++++++++---------------
+ 2 files changed, 20 insertions(+), 24 deletions(-)
+
+commit 48f648b2c028496bab159b83ec4b7bb7750569f0
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Wed Oct 16 18:38:01 2019 +0200
+
+    40% inginious git add final.c
+
+ final.c | 420 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 420 insertions(+)
+
+commit 7c93d46b4c47417aa3d441c0f9d29a8d14137292
+Merge: 6b75124 e580c55
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Wed Oct 16 12:05:51 2019 +0200
+
+    Merge branch 'master' of github.com:Scornet95/LINGI1341_Reseaux
+    zebi
+
+commit 6b751249ee2e642787b060708572d0cff7a87255
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Wed Oct 16 12:05:23 2019 +0200
+
+    test sur ton ordi chien
+
+ packet_implem_test.c | 489 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 489 insertions(+)
+
+commit e580c554b2e99badd698b2a14a285e8db8f0d4e4
+Author: Serge Cornet <serge_cornet@wifi-student7-792.sri.ucl.ac.be>
+Date:   Wed Oct 16 10:27:13 2019 +0200
+
+    Nouveau real address
+
+ real_address.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ec3126bc8ee44724b371dd65657e8c5630ffa1b7
+Author: Serge Cornet <serge_cornet@wifi-student7-792.sri.ucl.ac.be>
+Date:   Wed Oct 16 10:26:24 2019 +0200
+
+    Nouveau real address
+
+ real_address.c | 35 +++++++++++++++++++++++++++++++++++
+ real_address.h | 17 +++++++++++++++++
+ 2 files changed, 52 insertions(+)
+
+commit ef92940c9683e0537e9294d0540a2fde37d43004
+Author: Serge Cornet <serge_cornet@wifi-student7-792.sri.ucl.ac.be>
+Date:   Wed Oct 16 09:40:07 2019 +0200
+
+    Create Socket
+
+ create_socket.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
+
+commit 63d0f4b0134e465293fcc1dd2795e8a007b7e3e5
+Merge: aa56bea ba66609
+Author: Serge Cornet <serge_cornet@mbp-de-serge.home>
+Date:   Tue Oct 15 08:24:47 2019 +0200
+
+    Prob socket pour lié les ports
+
+commit aa56bea31a227a00e692024fb7ad4bf6fd89bcd3
+Author: Serge Cornet <serge_cornet@mbp-de-serge.home>
+Date:   Tue Oct 15 08:22:14 2019 +0200
+
+    Rajout du fichier sur les sockets mais problème pour lier les ports
+
+ packet_implem.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+commit ba66609e327255f30e30fed3908069f30aaddba7
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 14 14:33:58 2019 +0200
+
+    ce qu'il y a sur inginious
+
+ packet_implem.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
+
+commit f2f04e133fd2615545332127750ac69cd415a6ee
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Mon Oct 14 12:16:49 2019 +0200
+
+    Compile sur inginious, 15%
+
+ packet_implem.c | 71 ++++++++++++++++++++++++++-------------------------------
+ 1 file changed, 32 insertions(+), 39 deletions(-)
+
+commit 4858960c4ec302bb2f92a5eb011ef3d4e5032bde
+Author: Serge Cornet <serge_cornet@wifi-student7-739.sri.ucl.ac.be>
+Date:   Mon Oct 14 11:14:36 2019 +0200
+
+    Plus de problèmes de compilation dans le encode
+
+ packet_implem.c | 75 ++++++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 42 insertions(+), 33 deletions(-)
+
+commit 862877fcb2314736135470f15ddb040343adf206
+Author: Serge Cornet <serge_cornet@wifi-student7-739.sri.ucl.ac.be>
+Date:   Mon Oct 14 10:18:10 2019 +0200
+
+    Dernier problème d'indentation réglé dans le encode
+
+ packet_implem.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+
+commit e88aab356acd5659fb583d98974e5f6d13941a60
+Author: Serge Cornet <serge_cornet@wifi-student7-739.sri.ucl.ac.be>
+Date:   Mon Oct 14 10:04:16 2019 +0200
+
+    changement dans le encode
+
+ packet_implem.c | 42 +++++++++++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 19 deletions(-)
+
+commit 13d688f1ccfce669c9f62477975a4f4df7d8601e
+Author: Serge Cornet <serge_cornet@wifi-student7-27.sri.ucl.ac.be>
+Date:   Fri Oct 11 14:51:09 2019 +0200
+
+    Encode terminé, pas encore testé
+
+ packet_implem.c | 71 +++++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 64 insertions(+), 7 deletions(-)
+
+commit d2ccf2d66dcd15a2d09ab6389894ae6b4e939708
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Fri Oct 11 12:58:46 2019 +0200
+
+    petites corrections
+
+ packet_implem.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+commit 9e5569b57e1213e61462d0c18d89b2db9eaf01c5
+Merge: 2e55de5 a4f9854
+Author: Serge Cornet <serge_cornet@wifi-student7-27.sri.ucl.ac.be>
+Date:   Fri Oct 11 12:07:43 2019 +0200
+
+    Merge branch 'master' of https://github.com/Scornet95/LINGI1341_Reseaux
+
+commit 2e55de50e5c0413128198599fc0f87bd8a879055
+Author: Serge Cornet <serge_cornet@wifi-student7-27.sri.ucl.ac.be>
+Date:   Fri Oct 11 12:07:33 2019 +0200
+
+    Fin du timestamp pour l'encode
+
+ packet_implem.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+commit a4f985420515f52cce3162ffd8e9a470d384fd08
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Fri Oct 11 12:05:35 2019 +0200
+
+    j'ai fini decode
+
+ packet_implem.c | 53 ++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 44 insertions(+), 9 deletions(-)
+
+commit 46721a946141e53191c145882fac5af38f5df380
+Author: TomMansion <tom.mansion@gmail.com>
+Date:   Fri Oct 11 11:18:44 2019 +0200
+
+    mon avancement, presque fini decode
+
+ packet_implem.c | 95 ++++++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 56 insertions(+), 39 deletions(-)
+
+commit 0372e96d8d7ed8d25397cd6eee824a9fbe9d3959
+Author: Serge Cornet <serge_cornet@wifi-student7-27.sri.ucl.ac.be>
+Date:   Fri Oct 11 11:17:05 2019 +0200
+
+    debut du encode
+
+ packet_implem.c | 64 +++++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 58 insertions(+), 6 deletions(-)
+
+commit f334cedae7ec615cefe6b78d7f37d65c57216301
+Author: Serge Cornet <serge_cornet@hotmail.com>
+Date:   Wed Oct 9 14:23:54 2019 +0200
+
+    first commit
+
+ packet_implem.c    | 268 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ packet_interface.h | 177 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 445 insertions(+)
+
+commit cac35ee158666a4fa934106517b3275dca7af643
+Author: Scornet95 <45235509+Scornet95@users.noreply.github.com>
+Date:   Wed Oct 9 14:12:26 2019 +0200
+
+    Initial commit
+
+ README.md | 2 ++
+ 1 file changed, 2 insertions(+)
