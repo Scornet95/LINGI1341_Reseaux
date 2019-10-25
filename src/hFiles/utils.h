@@ -47,4 +47,6 @@ int sendQueue(int sockfd, address_t* addie);
 
 int emptyBuffer(address_t* add);
 
+void printPkt(pkt_t* pkt);
+
 #endif

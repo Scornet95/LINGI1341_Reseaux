@@ -124,13 +124,20 @@ void destroy_ll(ordered_ll *q){
 
 
 int printQ(ordered_ll *q){
-    while(q->size!=0){
-        //pkt_t* pek=pkt_new();
-        printf("%d\n",q->front->pkt->seqnum);
-        retrieve(q);
-        //printf("%d\n",(int)pkt_get_type(pek));
+    if(q == NULL){
+        printf("The list is NULL, nothing to print\n");
+        return 1;
     }
-    return 0;
+    if(q->front != NULL){
+        node* runner = q->front;
+
+        while(runner != NULL){
+            printPkt(runner->pkt);
+            runner = runner->next;
+        }
+    }
+    else
+        printf("The first node is NULL, nothing to print\n");
 }
 uint8_t peek(ordered_ll *list){
     if(list->front == NULL){

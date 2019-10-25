@@ -54,6 +54,8 @@ void testAckEncode(){
 
     pkt_t* pkt = ackEncode(seqnum, timestamp, 1, window);
 
+    printPkt(pkt);
+
     if(pkt_get_type(pkt) != 2)
         printf("an ack should always hava a type of 2\n");
 
@@ -97,6 +99,10 @@ void testAckEncode(){
         printf("timestamp was not set properly\n");
 
     pkt_del(pkt);
+}
+
+void testEnqueue(){
+    
 }
 
 int main(){

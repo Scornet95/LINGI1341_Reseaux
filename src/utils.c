@@ -142,3 +142,22 @@ pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, uint8_t window){
     }
     return NULL;
 }
+
+void printPkt(pkt_t* pkt){
+    if(pkt == NULL){
+        printf("packet is NULL, nothing to print\n");
+        return;
+    }
+    printf("type : %u\n", pkt_get_type(pkt));
+    printf("tr : %u\n", pkt_get_tr(pkt));
+    printf("window : %u\n", pkt_get_window(pkt));
+    printf("length : %u\n", pkt_get_length(pkt));
+    printf("seqnum : %u\n", pkt_get_seqnum(pkt));
+    char* payload = pkt_get_payload(pkt);
+    printf("payload : \n");
+
+    for(int i; i < pkt_get_length(pkt); i++){
+        printf("%c", *(payload + i));
+    }
+    printf("\n");
+}
