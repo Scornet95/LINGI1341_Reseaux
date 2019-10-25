@@ -41,10 +41,12 @@ struct param_t getArguments(int argc, char* argv[]);
 
 int create_socket(struct sockaddr_in6 *source_addr,int src_port,struct sockaddr_in6 *dest_addr,int dst_port);
 
-pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, int window);
+pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, uint8_t window);
 
 int sendQueue(int sockfd, address_t* addie);
 
 int emptyBuffer(address_t* add);
+
+void printPkt(pkt_t* pkt);
 
 #endif

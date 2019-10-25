@@ -60,6 +60,7 @@ const char * real_address(const char *address, struct sockaddr_in6 *rval){
     freeaddrinfo(servinfo);
     return NULL;
 }
+
 int pkt_verif(pkt_t *pkt, int last_ack, int window){
     if (pkt_get_tr(pkt) == 1){
         return 1;
@@ -118,7 +119,7 @@ int create_socket(struct sockaddr_in6 *source_addr, int src_port, struct sockadd
     return sockfd;
 }
 
-pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, int window){
+pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, uint8_t window){
     pkt_t *pkt_ret;
     pkt_ret = pkt_new();
     if(ack){
@@ -140,4 +141,23 @@ pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, int window){
         return pkt_ret;
     }
     return NULL;
+}
+
+void printPkt(pkt_t* pkt){
+    if(pkt == NULL){
+        printf("packet is NULL, nothing to print\n");
+        return;
+    }
+    printf("type : %u\n", pkt_get_type(pkt));
+    printf("tr : %u\n", pkt_get_tr(pkt));
+    printf("window : %u\n", pkt_get_window(pkt));
+    printf("length : %u\n", pkt_get_length(pkt));
+    printf("seqnum : %u\n", pkt_get_seqnum(pkt));
+    char* payload = pkt_get_payload(pkt);
+    printf("payload : \n");
+
+    for(int i; i < pkt_get_length(pkt); i++){
+        printf("%c", *(payload + i));
+    }
+    printf("\n");
 }
