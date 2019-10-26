@@ -10,7 +10,7 @@ TESTSRC= tests/testOrderedLL.c
 
 
 
-make: $(OBJ) receiver receiver.o
+make: $(OBJ) receiver 
 
 receiver : src/receiver.c $(OBJ)
 	$(CC) $(CFLAGS) src/receiver.c -o receiver $(OBJ) $(LDFLAGS)
