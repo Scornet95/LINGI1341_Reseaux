@@ -73,6 +73,8 @@ int pkt_verif(pkt_t *pkt, int last_ack, int window){
         if(pkt_get_seqnum(pkt) > last_ack || pkt_get_seqnum(pkt) < overflow){ //Le seqnum est dans la window
             return 3;
         }
+        else if(pkt_get_seqnum(pkt) < last_ack)
+            return 2;
         else
             return -1;
     }
