@@ -26,6 +26,6 @@ pkt_t * retrieve(ordered_ll * linked_list);
 
 void delete_node(node *node);
 
-uint8_t peek(ordered_ll * list);
+int peek(ordered_ll * list);
 
 #endif

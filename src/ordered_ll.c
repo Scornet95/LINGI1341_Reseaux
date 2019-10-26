@@ -147,9 +147,9 @@ void printQ(ordered_ll *q){
     else
         printf("The first node is NULL or the size is 0, nothing to print\n");
 }
-uint8_t peek(ordered_ll *list){
+int peek(ordered_ll *list){
     if(list->size == 0){
-        exit(EXIT_FAILURE);
+        return -1;
     }
-    return pkt_get_seqnum((list->front)->pkt);
+    return (uint8_t) pkt_get_seqnum((list->front)->pkt);
 }

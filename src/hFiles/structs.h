@@ -29,7 +29,6 @@ typedef struct address_t{
     int fd;
     int window;
     int firstGo;
-    uint32_t timestamp;
     ordered_ll *buffer;
     ordered_ll *acks;
 }address_t;

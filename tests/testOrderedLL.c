@@ -1,5 +1,6 @@
 #include "ordered_ll.h"
 #include "utils.h"
+#include "receiver.h"
 
 void testCreateDeleteNode(pkt_t* pkt){
     node* node = create_node(pkt);
@@ -178,9 +179,7 @@ void testAdd(){
     if (add(queue,pkt_4,253) != 0){
         printf("problème avec le add pkt_2");
     }
-    if (printQ(queue) == 0){
-        printf("réussi");
-    }
+    printQ(queue);
 }
 
 void testRetrieve(){
@@ -208,9 +207,102 @@ void testRetrieve(){
     destroy_ll(q);
 }
 
+void testEmptyBuffer1(){
+    address_t adda;
+    adda.buffer = create_ordered_ll();
+    adda.acks = create_ordered_ll();
+    adda.last_ack = 1;
+    adda.window = 31;
+    adda.fd = open("zeb", O_CREAT | O_APPEND | O_WRONLY | O_TRUNC);
+
+    pkt_t * pkt_1 = pkt_new();
+    pkt_set_tr(pkt_1, 0);
+    pkt_set_type(pkt_1, 1);
+    pkt_set_window(pkt_1, 31);
+    pkt_set_length(pkt_1, 4);
+    pkt_set_timestamp(pkt_1, 127);
+    pkt_set_seqnum(pkt_1, 4);
+    char buf[4];
+    buf[0] = 'A';
+    buf[1] = 'B';
+    buf[2] = 'C';
+    buf[3] = 'D';
+    pkt_set_payload(pkt_1,buf, 4);
+
+    pkt_t * pkt_2 = pkt_new();
+    pkt_set_tr(pkt_2, 0);
+    pkt_set_type(pkt_2, 1);
+    pkt_set_window(pkt_2, 31);
+    pkt_set_length(pkt_2, 130);
+    pkt_set_timestamp(pkt_2, 127);
+    pkt_set_seqnum(pkt_2, 3);
+    char *buf_2 = malloc(sizeof(char)*130);
+    for (int i = 0; i < 130; i++) {
+        if (i == 129){
+            buf_2[i] = 'B';
+        }
+        else{
+            buf_2[i] = 'A';
+        }
+    }
+    pkt_set_payload(pkt_2,buf_2,130);
+
+    pkt_t * pkt_3 = pkt_new();
+    pkt_set_tr(pkt_3, 0);
+    pkt_set_type(pkt_3, 1);
+    pkt_set_window(pkt_3, 31);
+    pkt_set_length(pkt_3, 4);
+    pkt_set_timestamp(pkt_3, 127);
+    pkt_set_seqnum(pkt_3, 1);
+    char buf_3[4];
+    buf_3[0] = 'S';
+    buf_3[1] = 'T';
+    buf_3[2] = 'O';
+    buf_3[3] = 'M';
+    pkt_set_payload(pkt_3,buf_3, 4);
+
+    pkt_t * pkt_4 = pkt_new();
+    pkt_set_tr(pkt_4, 0);
+    pkt_set_type(pkt_4, 1);
+    pkt_set_window(pkt_4, 31);
+    pkt_set_length(pkt_4, 4);
+    pkt_set_timestamp(pkt_4, 127);
+    pkt_set_seqnum(pkt_4, 2);
+    char buf_4[4];
+    buf_4[0] = 'Q';
+    buf_4[1] = 'V';
+    buf_4[2] = 'W';
+    buf_4[3] = 'Z';
+    pkt_set_payload(pkt_4,buf_4, 4);
+
+    add(adda.buffer, pkt_1, 255);
+    add(adda.buffer, pkt_2, 255);
+    add(adda.buffer, pkt_3, 255);
+    add(adda.buffer, pkt_4, 255);
+
+    printQ(adda.buffer);
+
+    emptyBuffer(&adda);
+    printf("zeb\n");
+
+    printQ(adda.buffer);
+
+    printf("lastAck : %u\n", adda.last_ack);
+
+    printf("\n\n");
+    printQ(adda.acks);
+
+    destroy_ll(adda.acks);
+    destroy_ll(adda.buffer);
+
+}
+
 int main(){
+    testEmptyBuffer1();
+    /*
     printf("Starting the test suite on ordered_ll\n\n");
     printf("testing ackEncode\n\n");
     testAdd();
+    */
     return EXIT_SUCCESS;
 }

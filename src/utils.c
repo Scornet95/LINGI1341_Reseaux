@@ -153,6 +153,7 @@ void printPkt(pkt_t* pkt){
     printf("window : %u\n", pkt_get_window(pkt));
     printf("length : %u\n", pkt_get_length(pkt));
     printf("seqnum : %u\n", pkt_get_seqnum(pkt));
+    printf("timestamp : %u\n", pkt_get_timestamp(pkt));
     const char* payload = pkt_get_payload(pkt);
     printf("payload : \n");
 
