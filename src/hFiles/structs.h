@@ -25,6 +25,7 @@ typedef struct param_t{
 
 typedef struct address_t{
     struct sockaddr_in6 *address;
+    uint32_t timestamp;
     int last_ack;
     int fd;
     int window;
