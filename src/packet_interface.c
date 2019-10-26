@@ -35,6 +35,7 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     uint8_t window = byte & 31;
 
     if(type != PTYPE_DATA && tr != 1){
+        printf("first\n");
         return E_UNCONSISTENT;
     }
 
@@ -62,8 +63,15 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     free(val);
 
     if(pkt_get_tr(pkt) == 0){
-        if(len != (size_t) predict_header_length(pkt) + (size_t) pkt_get_length(pkt) + (size_t) 8)
-            return E_UNCONSISTENT;
+        if(pkt_get_length(pkt) == 0){
+            if(len != (size_t) predict_header_length(pkt) + (size_t) pkt_get_length(pkt) + (size_t) 4)
+                return E_UNCONSISTENT;
+        }
+        else{
+            if(len != (size_t) predict_header_length(pkt) + (size_t) pkt_get_length(pkt) + (size_t) 8){
+                return E_UNCONSISTENT;
+            }
+        }
     }
     else{
         if(len != (size_t) predict_header_length(pkt) + (size_t) 4)
@@ -77,16 +85,21 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
 
     uint32_t timestamp = 0;
 
-    timestamp += (uint32_t) data[index];
+    timestamp += (uint32_t) data[index] & 0x000000ff;
     index++;
-    timestamp += ((uint32_t) data[index]) << 8;
+    uint32_t second = (((uint32_t) data[index]) << 8) & 0x0000ff00;
+    timestamp += second;
     index++;
-    timestamp += ((uint32_t) data[index]) << 16;
+    uint32_t third = (((uint32_t) data[index]) << 16) & 0x00ff0000;
+    timestamp += third;
     index++;
-    timestamp += ((uint32_t) data[index]) << 24;
+    uint32_t fourth = (((uint32_t) data[index]) << 24) & 0xff000000;
+    timestamp += fourth;
     index++;
 
     pkt_set_timestamp(pkt, timestamp);
+
+    printf("timestamp decode %u\n", timestamp);
 
     uint32_t crc1 = 0;
 
@@ -112,7 +125,7 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
         return E_CRC;
     }
 
-    if(pkt_get_type(pkt) != PTYPE_DATA || pkt_get_tr(pkt) == 1)
+    if(pkt_get_type(pkt) != PTYPE_DATA || pkt_get_tr(pkt) == 1 || pkt_get_length(pkt) == 0)
         return PKT_OK;
 
     char* payload = malloc(sizeof(char) * pkt_get_length(pkt));
@@ -123,6 +136,8 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     }
 
     pkt_set_payload(pkt, payload, pkt_get_length(pkt));
+
+    free(payload);
 
     uint32_t crc2 = 0;
     crc2 += ((uint32_t) ((uint8_t) data[index])) << 24;

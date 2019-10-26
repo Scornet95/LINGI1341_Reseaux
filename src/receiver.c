@@ -81,19 +81,20 @@ int main(int argc, char* argv[]){
 int emptyBuffer(address_t* add){
     if(peek(add->buffer) == add->last_ack){
         int maxSeq;
-        ssize_t err;
         pkt_t* pkt, *ack;
         do{
             pkt = retrieve(add->buffer);
             if(pkt != NULL){
                 maxSeq = pkt_get_seqnum(pkt);
-                err = write(add->fd, pkt_get_payload(pkt), pkt_get_length(pkt));
+                if(maxSeq == add->last_ack && pkt_get_length(pkt) == 0){
+                    close(add->fd);
+                    ack = ackEncode((maxSeq + 1) % 256, pkt_get_timestamp(pkt), 1, (add->window - add->buffer->size));
+                    enqueue(add->acks, ack);
+                    return 1;
+                }
+                write(add->fd, pkt_get_payload(pkt), pkt_get_length(pkt));
                 ack = ackEncode((maxSeq + 1) % 256, pkt_get_timestamp(pkt), 1, (add->window - add->buffer->size));
                 enqueue(add->acks, ack);
-                if(err == 0){ //Je suppose ici que si je reçois un paquet qui n'est pas de taille max, c'est que c'est le dernier et il contient donc eof
-                    close(add->fd);
-                    break;
-                }
             }
         }while(peek(add->buffer) == (maxSeq + 1) % 256);
         //mettre last_ack à jour et encoder le ack que l'on va envoyer
@@ -113,24 +114,24 @@ int sendQueue(int sockfd, address_t* addie){
     char* buf = malloc(sizeof(char) * 11);
     size_t len = 11;
     while((addie->acks)->size > 0){
-        printf("queue size : %d\n", (addie->acks)->size);
         pkt = retrieve(addie->acks);
         if(pkt != NULL){
-             printf("paquet n %d\t timestamp %u\n", pkt_get_seqnum(pkt), pkt_get_timestamp(pkt));
              err = pkt_encode(pkt, buf, &len);
              if(err == PKT_OK){
                  sendto(sockfd, buf, len, 0, (struct sockaddr*) addie->address, sizeof(struct sockaddr_in6));
              }
              else{
                 printf("erreur d'encode\n");
+                free(buf);
                 return -1;
             }
         }
         else{
             printf("erreur retrieve\n");
+            free(buf);
             return -1;
         }
-    free(buf);
     }
+    free(buf);
     return 0;
 }
