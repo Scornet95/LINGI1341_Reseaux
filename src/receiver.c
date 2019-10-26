@@ -47,36 +47,28 @@ int main(int argc, char* argv[]){
             }
 
             status = pkt_verif(pkt, addie.last_ack, addie.window);
-            if(status == 0){ //Le paquet reçu correspond à celui attendu, on le place dans le buffer, on update last_ack et on renvoie un ack.
-                printf("stat0\n");
+            if(status == 0){ //Le paquet reçu correspond à celui attendu, on le place dans le buffer.
                 add(addie.buffer, pkt, addie.last_ack);
-                addie.timestamp = pkt_get_timestamp(pkt);
-                printf("addie timestamp : %u\n", addie.timestamp);
             }
 
             else if(status == 1){ //Le paquet reçu est tronqué, on encode un NACK.
                 //encoder un NACK et le mettre dans la fifo.
-                addie.timestamp = pkt_get_timestamp(pkt);
-                pkt_t* nAck = ackEncode(pkt_get_seqnum(pkt), addie.timestamp, 0, (addie.window - addie.buffer->size));
+                pkt_t* nAck = ackEncode(pkt_get_seqnum(pkt), pkt_get_timestamp(pkt), 0, (addie.window - addie.buffer->size));
                 enqueue(addie.acks, nAck);
             }
 
             else if(status == 2){
-                addie.timestamp = pkt_get_timestamp(pkt);
-                pkt_t* ack = ackEncode(addie.last_ack, addie.timestamp, 1, (addie.window - addie.buffer->size));
+                pkt_t* ack = ackEncode(addie.last_ack, pkt_get_timestamp(pkt), 1, (addie.window - addie.buffer->size));
                 enqueue(addie.acks, ack);
             }
 
             else if(status == 3){
-                printf("packet out of sequence\n");
                 add(addie.buffer, pkt, addie.last_ack);
-                addie.timestamp = pkt_get_timestamp(pkt);
-                pkt_t* ack = ackEncode(addie.last_ack, addie.timestamp, 1, (addie.window - addie.buffer->size));
+                pkt_t* ack = ackEncode(addie.last_ack, pkt_get_timestamp(pkt), 1, (addie.window - addie.buffer->size));
                 enqueue(addie.acks, ack);
             }
             emptyBuffer(&addie);
             //fonction pour vider le buffer et encoder un ack + écrire dans le fichier correspondant.
-            pkt_del(pkt);
         }
         if(pfd[0].revents & POLLOUT){ //Il y a de la place pour écrire sur le socket, c'est ici que l'on va envoyer les acks.
             if(sendQueue(sfd, &addie) != 0)
@@ -105,7 +97,7 @@ int emptyBuffer(address_t* add){
             }
         }while(peek(add->buffer) == (maxSeq + 1) % 256);
         //mettre last_ack à jour et encoder le ack que l'on va envoyer
-        add->last_ack = maxSeq + 1;
+        add->last_ack = (maxSeq + 1) % 256;
         pkt_del(pkt);
     }
     else{//Le premier élément de la liste a le seqnum last_ack
