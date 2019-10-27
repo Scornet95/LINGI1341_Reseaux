@@ -2,6 +2,7 @@
 
 struct param_t getArguments(int argc, char* argv[]){
     struct param_t toRet;
+    toRet.maxCo = 100;
     struct sockaddr_in6 host_adress;
     int opt, index;
     while ((opt = getopt(argc, argv, "m:o:")) != -1) {
@@ -15,12 +16,10 @@ struct param_t getArguments(int argc, char* argv[]){
 				break;
 			default:
 				fprintf(stderr, "Usage:\n"
-								"-s      Act as server\n"
-								"-c      Act as client\n"
-								"-p PORT UDP port to connect to (client)\n"
-								"        or to listen on (server)\n"
-								"-h HOST UDP of the server (client)\n"
-								"        or on which we listen (server)\n");
+								"-m     Maximum number of simultaneous connections.\n"
+								"-o     Format of the output files\n"
+								"Adress on which the receiver shall listen\n"
+                                "Port on which the receiver shall listen\n");
 				break;
 		}
 	}

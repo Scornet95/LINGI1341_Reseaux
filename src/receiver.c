@@ -16,6 +16,10 @@ int main(int argc, char* argv[]){
     if(firstBuffer == NULL)
         return -1;
 
+    address_t connections[args.maxCo];
+    int numberOfCo = 0;
+    int count = 0;
+
     address_t addie;
     addie.last_ack = 0;
     addie.buffer = create_ordered_ll();
