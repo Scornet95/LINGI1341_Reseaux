@@ -40,7 +40,7 @@ void enqueue_linked_list(struct linked_list *q, address_t * address){
 }
 
 void delete_address_node(address_node *n){
-    free(n->sender_address->address);
+    //free(n->sender_address->address);
     free(n->sender_address->buffer);
     free(n->sender_address->acks);
     free(n->sender_address);
@@ -68,7 +68,7 @@ void destroy_linked_list(struct linked_list *q){
     return;
 }
 
-address_t * search_linked_list(struct linked_list* q, sockaddr_in6* socket_address, int maxSize, char* format, int* count, uint16_t length){
+address_t * search_linked_list(struct linked_list* q, struct sockaddr_in6* socket_address, int maxSize, char* format, int* count, uint16_t length){
     if (q->size == 0){
         if(length == 0)
             return NULL;
@@ -80,7 +80,7 @@ address_t * search_linked_list(struct linked_list* q, sockaddr_in6* socket_addre
     else{
         address_node * current = q->front;
         while(current != NULL){
-            if (memcmp(current->sender_address->address, socket_address, sizeof(sockaddr_in6)) == 0){
+            if (memcmp(current->sender_address->address, socket_address, sizeof(struct sockaddr_in6)) == 0){
                 return current->sender_address;
             }
             else{
@@ -107,9 +107,11 @@ void remove_linked_list(struct linked_list* q, address_t* address){
     }
     address_node* runner = q->front;
     if(memcmp(q->front->sender_address, address, sizeof(address_t)) == 0){
+        printf("ici mais vraiment icitavu\n");
         q->front = runner->next;
         q->size--;
         delete_address_node(runner);
+        return;
     }
     address_node* nextRunner = runner->next;
     while(nextRunner != NULL){
@@ -127,7 +129,7 @@ void remove_linked_list(struct linked_list* q, address_t* address){
 address_t* createAddress_t(struct sockaddr_in6* add, int count, char* format){
     address_t* toRet = malloc(sizeof(address_t));
     toRet->address = malloc(sizeof(struct sockaddr_in6));
-    memcpy(toRet->adress, add, sizeof(struct sockaddr_in6));
+    memcpy(toRet->address, add, sizeof(struct sockaddr_in6));
     toRet->last_ack = 0;
     toRet->window = 31;
     toRet->buffer = create_ordered_ll();

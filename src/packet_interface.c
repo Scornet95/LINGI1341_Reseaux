@@ -99,7 +99,6 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
 
     pkt_set_timestamp(pkt, timestamp);
 
-    printf("timestamp decode %u\n", timestamp);
 
     uint32_t crc1 = 0;
 

@@ -29,7 +29,9 @@ pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, uint8_t window);
 
 int sendQueue(int sockfd, address_t* addie);
 
-int emptyBuffer(address_t* add);
+int emptyBuffer(address_t* add, ackQueue* acks);
+
+int sendAckQueue(int sockfd, ackQueue* q);
 
 void printPkt(pkt_t* pkt);
 

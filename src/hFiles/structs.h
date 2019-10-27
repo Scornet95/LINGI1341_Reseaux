@@ -33,15 +33,15 @@ typedef struct address_t{
     ordered_ll *acks;
 }address_t;
 
-struct linked_list{
-    address_node *front;
-    int size;
-};
-
 typedef struct noeud{
     address_t * sender_address;
     struct noeud *next;
 }address_node;
+
+struct linked_list{
+    address_node *front;
+    int size;
+};
 
 typedef struct ackNode{
     struct sockaddr_in6* address;

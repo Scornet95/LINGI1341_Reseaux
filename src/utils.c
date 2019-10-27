@@ -3,6 +3,8 @@
 struct param_t getArguments(int argc, char* argv[]){
     struct param_t toRet;
     toRet.maxCo = 100;
+    toRet.format = malloc(strlen("%d") + 1);
+    strcpy(toRet.format, "%d");
     struct sockaddr_in6 host_adress;
     int opt, index;
     while ((opt = getopt(argc, argv, "m:o:")) != -1) {
@@ -11,7 +13,7 @@ struct param_t getArguments(int argc, char* argv[]){
 				toRet.maxCo = atoi(optarg);
 				break;
 			case 'o':
-                toRet.format = malloc(sizeof(char)*(strlen(optarg)+1));
+                realloc(toRet.format, sizeof(char)*(strlen(optarg)+1));
                 strcpy(toRet.format, optarg);
 				break;
 			default:
