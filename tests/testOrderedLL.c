@@ -297,8 +297,114 @@ void testEmptyBuffer1(){
 
 }
 
+void testPktVerif(){
+    pkt_t * pkt_1 = pkt_new();
+    pkt_set_tr(pkt_1, 0);
+    pkt_set_type(pkt_1, 1);
+    pkt_set_window(pkt_1, 31);
+    pkt_set_length(pkt_1, 4);
+    pkt_set_timestamp(pkt_1, 127);
+    pkt_set_seqnum(pkt_1, 0);
+    char buf[4];
+    buf[0] = 'A';
+    buf[1] = 'B';
+    buf[2] = 'C';
+    buf[3] = 'D';
+    pkt_set_payload(pkt_1,buf, 4);
+
+    pkt_t * pkt_2 = pkt_new();
+    pkt_set_tr(pkt_2, 1);
+    pkt_set_type(pkt_2, 1);
+    pkt_set_window(pkt_2, 31);
+    pkt_set_length(pkt_2, 130);
+    pkt_set_timestamp(pkt_2, 127);
+    pkt_set_seqnum(pkt_2, 3);
+    char *buf_2 = malloc(sizeof(char)*130);
+    for (int i = 0; i < 130; i++) {
+        if (i == 129){
+            buf_2[i] = 'B';
+        }
+        else{
+            buf_2[i] = 'A';
+        }
+    }
+    pkt_set_payload(pkt_2,buf_2,130);
+
+    pkt_t * pkt_3 = pkt_new();
+    pkt_set_tr(pkt_3, 0);
+    pkt_set_type(pkt_3, 1);
+    pkt_set_window(pkt_3, 31);
+    pkt_set_length(pkt_3, 4);
+    pkt_set_timestamp(pkt_3, 127);
+    pkt_set_seqnum(pkt_3, 245);
+    char buf_3[4];
+    buf_3[0] = 'S';
+    buf_3[1] = 'T';
+    buf_3[2] = 'O';
+    buf_3[3] = 'M';
+    pkt_set_payload(pkt_3,buf_3, 4);
+
+    pkt_t * pkt_4 = pkt_new();
+    pkt_set_tr(pkt_4, 0);
+    pkt_set_type(pkt_4, 1);
+    pkt_set_window(pkt_4, 31);
+    pkt_set_length(pkt_4, 4);
+    pkt_set_timestamp(pkt_4, 127);
+    pkt_set_seqnum(pkt_4, 2);
+    char buf_4[4];
+    buf_4[0] = 'Q';
+    buf_4[1] = 'V';
+    buf_4[2] = 'W';
+    buf_4[3] = 'Z';
+    pkt_set_payload(pkt_4,buf_4, 4);
+
+    pkt_t * pkt_5 = pkt_new();
+    pkt_set_tr(pkt_5, 0);
+    pkt_set_type(pkt_5, 1);
+    pkt_set_window(pkt_5, 31);
+    pkt_set_length(pkt_5, 4);
+    pkt_set_timestamp(pkt_5, 127);
+    pkt_set_seqnum(pkt_5, 2);
+    char buf_5[4];
+    buf_5[0] = 'Q';
+    buf_5[1] = 'V';
+    buf_5[2] = 'W';
+    buf_5[3] = 'Z';
+    pkt_set_payload(pkt_5,buf_5, 4);
+
+    if ((pkt_verif(pkt_1,254,31)) == 3){
+        printf("Succeed pkt_1\n");
+    }
+    else{
+        printf("failed to verif pkt_1\n");
+    }
+    int q = pkt_verif(pkt_2,254,31);
+    printf("Succeed pkt_2 %d\n",q);
+    
+    if ((pkt_verif(pkt_3,254,31)) == 2){
+        printf("Succeed Pkt_3\n");
+    }
+    else{
+        printf("failed to verif pkt_3\n");
+    }
+    if ((pkt_verif(pkt_4,4,31)) == 2){
+        printf("Succeed Pkt_4\n");
+    }
+    else{
+        printf("failed to verif pkt_4\n");
+    }
+    if ((pkt_verif(pkt_5,1,31)) == 3){
+        printf("Succeed Pkt_5\n");
+    }
+    else{
+        printf("failed to verif pkt_5\n");
+    }
+
+
+}
+
 int main(){
-    testEmptyBuffer1();
+    testPktVerif();
     /*
     printf("Starting the test suite on ordered_ll\n\n");
     printf("testing ackEncode\n\n");
