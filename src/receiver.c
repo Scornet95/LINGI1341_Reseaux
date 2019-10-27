@@ -102,7 +102,6 @@ int emptyBuffer(address_t* add){
         pkt_del(pkt);
     }
     else{//Le premier élément de la liste a le seqnum last_ack
-        printf("pas lastack\n");
         return -1;
     }
     return 0;

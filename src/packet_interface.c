@@ -137,7 +137,6 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
 
     pkt_set_payload(pkt, payload, pkt_get_length(pkt));
 
-    free(payload);
 
     uint32_t crc2 = 0;
     crc2 += ((uint32_t) ((uint8_t) data[index])) << 24;
@@ -155,6 +154,7 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     if(crc2 != pkt_get_crc2(pkt)){
         return E_CRC;
     }
+    free(payload);
     return PKT_OK;
 }
 
@@ -222,6 +222,8 @@ pkt_status_code pkt_encode(const pkt_t* pkt, char *buf, size_t *len)
     for(i = 0; i < 4; i++, index++){
         buf[index] = (char) crc[3 - i];
     }
+
+    free(crc);
 
     if(type == PTYPE_DATA){
         const char* payload = pkt_get_payload(pkt);
