@@ -40,7 +40,6 @@ int main(int argc, char* argv[]){
 
             if(err != PKT_OK){
                 printf("err : %d\n", err);
-                pkt_del(pkt);
             }
 
             addie = search_linked_list(senders, &src_addr, args.maxCo, args.format, &count, pkt_get_length(pkt));
@@ -56,12 +55,14 @@ int main(int argc, char* argv[]){
             }
             else{
                 status = pkt_verif(pkt, addie->last_ack, addie->window);
-                if(status == 0){ //Le paquet reçu correspond à celui attendu, on le place dans le buffer.
+                if(err != PKT_OK){
+                     ;
+                }
+                else if(status == 0){ //Le paquet reçu correspond à celui attendu, on le place dans le buffer.
                     add(addie->buffer, pkt, addie->last_ack);
                 }
 
                 else if(status == 1){ //Le paquet reçu est tronqué, on encode un NACK.
-                    //encoder un NACK et le mettre dans la fifo.
                     pkt_t* nAck = ackEncode(pkt_get_seqnum(pkt), pkt_get_timestamp(pkt), 0, (addie->window - addie->buffer->size));
                     enqueue(addie->acks, nAck);
                 }
@@ -79,6 +80,7 @@ int main(int argc, char* argv[]){
                 if(emptyBuffer(addie, acks) == 1){
                     remove_linked_list(senders, addie);
                 }
+                pkt_del(pkt);
             }
             //fonction pour vider le buffer et encoder un ack + écrire dans le fichier correspondant.
         }

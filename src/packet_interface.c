@@ -64,16 +64,21 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
 
     if(pkt_get_tr(pkt) == 0){
         if(pkt_get_length(pkt) == 0){
-            if(len != (size_t) predict_header_length(pkt) + (size_t) pkt_get_length(pkt) + (size_t) 4)
+            if(len != (size_t) predict_header_length(pkt)  + (size_t) 4){
+                printf("length : %ld, header length : %ld\n", len, (size_t) predict_header_length(pkt));
                 return E_UNCONSISTENT;
+            }
         }
         else{
             if(len != (size_t) predict_header_length(pkt) + (size_t) pkt_get_length(pkt) + (size_t) 8){
+                printf("len : %ld, expected : %ld\n", len, (size_t) predict_header_length(pkt) + (size_t) pkt_get_length(pkt) + (size_t) 8);
+		        printf("ici\n");
                 return E_UNCONSISTENT;
             }
         }
     }
     else{
+        printf("tr à 1 fdp\n");
         if(len != (size_t) predict_header_length(pkt) + (size_t) 4)
             return E_UNCONSISTENT;
     }
@@ -151,6 +156,7 @@ pkt_status_code pkt_decode(const char *data, const size_t len, pkt_t *pkt)
     crc2 = crc32( 0L, Z_NULL, 0);
     crc2 = crc32(crc2, (const unsigned char*) payload, pkt_get_length(pkt));
     if(crc2 != pkt_get_crc2(pkt)){
+        free(payload);
         return E_CRC;
     }
     free(payload);
@@ -352,7 +358,10 @@ pkt_status_code pkt_set_payload(pkt_t *pkt,const char *data,const uint16_t lengt
 
     pkt_set_length(pkt, length);
     char * payload = (char *) malloc(length);
-    if(payload == NULL) return E_UNCONSISTENT;
+    if(payload == NULL){
+        printf("ici c'est sur\n");
+        return E_UNCONSISTENT;
+    } 
 
     memcpy(payload,data,length);
     pkt->payload = payload;

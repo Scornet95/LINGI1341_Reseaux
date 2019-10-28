@@ -135,7 +135,7 @@ address_t* createAddress_t(struct sockaddr_in6* add, int count, char* format){
     toRet->acks = create_ordered_ll();
     char* s = malloc(strlen(format) + 1);
     sprintf(s, format, count);
-    toRet->fd = open(s, O_CREAT | O_APPEND | O_WRONLY | O_TRUNC);
+    toRet->fd = open(s, O_CREAT | O_APPEND | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
     free(s);
     return toRet;
 }
