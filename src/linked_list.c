@@ -40,7 +40,7 @@ void enqueue_linked_list(struct linked_list *q, address_t * address){
 }
 
 void delete_address_node(address_node *n){
-    //free(n->sender_address->address);
+    free(n->sender_address->address);
     free(n->sender_address->buffer);
     free(n->sender_address->acks);
     free(n->sender_address);
@@ -102,12 +102,11 @@ address_t * search_linked_list(struct linked_list* q, struct sockaddr_in6* socke
 }
 
 void remove_linked_list(struct linked_list* q, address_t* address){
-    if(q->size == 0){
+    if(q->size == 0 || q->front == NULL){
         return;
     }
     address_node* runner = q->front;
     if(memcmp(q->front->sender_address, address, sizeof(address_t)) == 0){
-        printf("ici mais vraiment icitavu\n");
         q->front = runner->next;
         q->size--;
         delete_address_node(runner);
@@ -137,6 +136,7 @@ address_t* createAddress_t(struct sockaddr_in6* add, int count, char* format){
     char* s = malloc(strlen(format) + 1);
     sprintf(s, format, count);
     toRet->fd = open(s, O_CREAT | O_APPEND | O_WRONLY | O_TRUNC);
+    free(s);
     return toRet;
 }
 
@@ -155,7 +155,8 @@ ackQueue* createAckQueue(){
 
 void enqueue_ack_queue(pkt_t* ack, struct sockaddr_in6* address, ackQueue* queue){
     ackNode* node = malloc(sizeof(ackNode));
-    node->address = address;
+    node->address = malloc(sizeof(struct sockaddr_in6));
+    memcpy(node->address, address, sizeof(struct sockaddr_in6));
     node->ack = ack;
     node->next = NULL;
 

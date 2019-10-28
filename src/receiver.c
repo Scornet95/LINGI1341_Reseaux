@@ -108,7 +108,6 @@ int emptyBuffer(address_t* add, ackQueue* acks){
                     close(add->fd);
                     ack = ackEncode((maxSeq + 1) % 256, pkt_get_timestamp(pkt), 1, (add->window - add->buffer->size));
                     enqueue_ack_queue(ack, add->address, acks);
-                    printf("ici\n");
                     return 1;
                 }
                 write(add->fd, pkt_get_payload(pkt), pkt_get_length(pkt));
@@ -161,7 +160,6 @@ int sendAckQueue(int sockfd, ackQueue* q){
     char* buf = malloc(sizeof(char) * 11);
     size_t len = 11;
     while(node != NULL){
-        printPkt(node->ack);
         err = pkt_encode(node->ack, buf, &len);
         pkt_del(node->ack);
 
@@ -174,6 +172,7 @@ int sendAckQueue(int sockfd, ackQueue* q){
            return -1;
        }
        free(node->address);
+       free(node);
        node = dequeue_ack_queue(q);
     }
     free(buf);

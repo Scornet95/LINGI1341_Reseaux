@@ -13,7 +13,7 @@ struct param_t getArguments(int argc, char* argv[]){
 				toRet.maxCo = atoi(optarg);
 				break;
 			case 'o':
-                realloc(toRet.format, sizeof(char)*(strlen(optarg)+1));
+                toRet.format = realloc(toRet.format, sizeof(char)*(strlen(optarg)+1));
                 strcpy(toRet.format, optarg);
 				break;
 			default:
@@ -132,6 +132,7 @@ pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, uint8_t window){
         pkt_set_length(pkt_ret,0);
         pkt_set_seqnum(pkt_ret, seqnum);
         pkt_set_timestamp(pkt_ret, timestamp);
+        pkt_ret->payload = NULL;
         return pkt_ret;
     }
     else{
@@ -141,6 +142,7 @@ pkt_t* ackEncode(uint8_t seqnum, uint32_t timestamp, int ack, uint8_t window){
         pkt_set_length(pkt_ret, 0);
         pkt_set_seqnum(pkt_ret, seqnum);
         pkt_set_timestamp(pkt_ret, timestamp);
+        pkt_ret->payload = NULL;
         return pkt_ret;
     }
     return NULL;
