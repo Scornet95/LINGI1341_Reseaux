@@ -116,10 +116,10 @@ int emptyBuffer(address_t* add, ackQueue* acks){
                 ack = ackEncode((maxSeq + 1) % 256, pkt_get_timestamp(pkt), 1, (add->window - add->buffer->size));
                 enqueue(add->acks, ack);
             }
+            pkt_del(pkt);
         }while(peek(add->buffer) == (maxSeq + 1) % 256);
         //mettre last_ack à jour et encoder le ack que l'on va envoyer
         add->last_ack = (maxSeq + 1) % 256;
-        pkt_del(pkt);
     }
     else{//Le premier élément de la liste a le seqnum last_ack
         return -1;
