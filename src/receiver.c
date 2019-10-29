@@ -80,9 +80,8 @@ int main(int argc, char* argv[]){
                 if(emptyBuffer(addie, acks) == 1){
                     remove_linked_list(senders, addie);
                 }
-                pkt_del(pkt);
+                //pkt_del(pkt);
             }
-            //fonction pour vider le buffer et encoder un ack + écrire dans le fichier correspondant.
         }
         if(pfd[0].revents & POLLOUT){ //Il y a de la place pour écrire sur le socket, c'est ici que l'on va envoyer les acks.
             address_node* runner = senders->front;
