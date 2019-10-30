@@ -5,6 +5,7 @@
 #include <string.h>
 
 int main(){
+    printf("Début des test concernant l'implémentation des paquets\n\n");
     pkt_t * pkt_1 = pkt_new();
     pkt_set_tr(pkt_1,0);
     pkt_set_type(pkt_1,1);
@@ -18,6 +19,7 @@ int main(){
     buf[2] = 'C';
     buf[3] = 'D';
     pkt_set_payload(pkt_1,buf,4);
+    printf("Paquet 1 avant l'encodage : \n");
     printf("pkt tr : %d\n",pkt_1->tr);
     printf("pkt_1 type : %d \n",pkt_1->type);
     printf("pkt_1 window : %d \n",pkt_1->tr);
@@ -29,18 +31,19 @@ int main(){
     length_header = length_header + 8 + sizeof(buf);
     char *buffer = malloc(length_header);
     if ((pkt_encode(pkt_1,buffer,&length_header)) == PKT_OK){
-        printf("C'est good\n");
+        printf("Le paquet a bien été encodé\n");
     }
     else{
-        printf("Nope\n");
+        printf("Erreur d'encodage du paquet\n");
     }
     pkt_t * pkt_test = pkt_new();
     if ((pkt_decode(buffer,length_header,pkt_test)) == PKT_OK){
-        printf("C'est good\n");
+        printf("Le paquet a bien été décodé\n");
     }
     else{
-        printf("Nope\n");
+        printf("Erreur de décodage du paquet\n");
     }
+    printf("Paquet 1 après encodage et décodage : \n");
     printf("pkt tr : %d\n",pkt_test->tr);
     printf("pkt_test type : %d \n",pkt_test->type);
     printf("pkt_test window : %d \n",pkt_test->tr);
@@ -66,6 +69,7 @@ int main(){
         }
     }
     pkt_set_payload(pkt_2,buf_2,130);
+    printf("Paquet 2 avant l'encodage : \n");
     printf("pkt tr : %d\n",pkt_2->tr);
     printf("pkt_2 type : %d \n",pkt_2->type);
     printf("pkt_2 window : %d \n",pkt_2->tr);
@@ -79,18 +83,18 @@ int main(){
     printf("Size %d\n",length_header_2);
     char *buffer_2 = malloc(length_header_2);
     if ((pkt_encode(pkt_2, buffer_2, &length_header_2)) == PKT_OK){
-        printf("C'est good\n");
-    }
+        printf("Le paquet a bien été encodé\n");    }
     else{
-        printf("Nope\n");
+        printf("Erreur d'encodage du paquet\n");
     }
     pkt_t * pkt_test_2 = pkt_new();
     if ((pkt_decode(buffer_2, length_header_2, pkt_test_2)) == PKT_OK){
-        printf("C'est good\n");
+        printf("Le paquet a bien été décodé\n");
     }
     else{
-        printf("Nope\n");
+        printf("Erreur de décodage du paquet\n");
     }
+    printf("Paquet 2 après encodage et décodage : \n");
     printf("pkt tr : %d\n",pkt_test_2->tr);
     printf("pkt_test_2 type : %d \n",pkt_test_2->type);
     printf("pkt_test_2 window : %d \n",pkt_test_2->tr);

@@ -74,8 +74,8 @@ int main(int argc, char* argv[]){
 
                 else if(status == 3){
                     add(addie->buffer, pkt, addie->last_ack);
-                    pkt_t* ack = ackEncode(addie->last_ack, pkt_get_timestamp(pkt), 1, (addie->window - addie->buffer->size));
-                    enqueue(addie->acks, ack);
+                    //pkt_t* ack = ackEncode(addie->last_ack, pkt_get_timestamp(pkt), 1, (addie->window - addie->buffer->size));
+                    //enqueue(addie->acks, ack);
                 }
                 if(emptyBuffer(addie, acks) == 1){
                     remove_linked_list(senders, addie);
@@ -120,7 +120,7 @@ int emptyBuffer(address_t* add, ackQueue* acks){
         //mettre last_ack à jour et encoder le ack que l'on va envoyer
         add->last_ack = (maxSeq + 1) % 256;
     }
-    else{//Le premier élément de la liste a le seqnum last_ack
+    else{//Le premier élément de la liste a un seqnum > last_ack
         return -1;
     }
     return 0;
