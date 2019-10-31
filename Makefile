@@ -5,7 +5,7 @@ LDFLAGS = -lz
 
 OBJ= packet_interface.o utils.o ordered_ll.o linked_list.o
 SRC= src/packet_interface.c src/ordered_ll.c src/utils.c src/linked_list.c
-TESTSRC= tests/testOrderedLL.c
+TESTSRC= tests/test.c
 
 
 
@@ -23,8 +23,9 @@ $(OBJ) : $(SRC)
 
 all: make  clean
 
-tests: $(TESTSRC) $(OBJ) receiver.o
-	$(CC) $(CFLAGS) $(TESTSRC) $(OBJ) receiver.o $(LDFLAGS) -o test
+tests: $(TESTSRC) $(OBJ)
+	$(CC) $(CFLAGS) $(TESTSRC) $(OBJ) $(LDFLAGS) -o test
+	./test
 
 clean:
 	rm *.o

@@ -28,7 +28,6 @@ typedef struct address_t{
     int last_ack;
     int fd;
     int window;
-    int firstGo;
     ordered_ll *buffer;
     ordered_ll *acks;
 }address_t;

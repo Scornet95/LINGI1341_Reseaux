@@ -167,3 +167,88 @@ void printPkt(pkt_t* pkt){
     }
     printf("\n");
 }
+
+
+
+int emptyBuffer(address_t* add, ackQueue* acks){
+    if(peek(add->buffer) == add->last_ack){
+        int maxSeq;
+        pkt_t* pkt, *ack;
+        do{
+            pkt = retrieve(add->buffer);
+            if(pkt != NULL){
+                maxSeq = pkt_get_seqnum(pkt);
+                if(maxSeq == add->last_ack && pkt_get_length(pkt) == 0){
+                    close(add->fd);
+                    ack = ackEncode((maxSeq + 1) % 256, pkt_get_timestamp(pkt), 1, (add->window - add->buffer->size));
+                    enqueue_ack_queue(ack, add->address, acks);
+                    return 1;
+                }
+                write(add->fd, pkt_get_payload(pkt), pkt_get_length(pkt));
+                ack = ackEncode((maxSeq + 1) % 256, pkt_get_timestamp(pkt), 1, (add->window - add->buffer->size));
+                enqueue(add->acks, ack);
+            }
+            pkt_del(pkt);
+        }while(peek(add->buffer) == (maxSeq + 1) % 256);
+        //mettre last_ack à jour et encoder le ack que l'on va envoyer
+        add->last_ack = (maxSeq + 1) % 256;
+    }
+    else{//Le premier élément de la liste a un seqnum > last_ack
+        return -1;
+    }
+    return 0;
+}
+
+int sendQueue(int sockfd, address_t* addie){
+    pkt_t* pkt;
+    pkt_status_code err;
+    char* buf = malloc(sizeof(char) * 11);
+    size_t len = 11;
+    while((addie->acks)->size > 0){
+        pkt = retrieve(addie->acks);
+        if(pkt != NULL){
+             err = pkt_encode(pkt, buf, &len);
+             if(err == PKT_OK){
+                 pkt_del(pkt);
+                 sendto(sockfd, buf, len, 0, (struct sockaddr*) addie->address, sizeof(struct sockaddr_in6));
+             }
+             else{
+                printf("erreur d'encode\n");
+                free(buf);
+                return -1;
+            }
+        }
+        else{
+            printf("erreur retrieve\n");
+            free(buf);
+            return -1;
+        }
+    }
+    free(buf);
+    return 0;
+}
+
+int sendAckQueue(int sockfd, ackQueue* q){
+    ackNode* node = dequeue_ack_queue(q);
+    int err;
+    char* buf = malloc(sizeof(char) * 11);
+    size_t len = 11;
+    while(node != NULL){
+        err = pkt_encode(node->ack, buf, &len);
+        pkt_del(node->ack);
+
+        if(err == PKT_OK){
+            sendto(sockfd, buf, len, 0, (struct sockaddr*) node->address, sizeof(struct sockaddr_in6));
+        }
+        else{
+           printf("erreur d'encode\n");
+           free(buf);
+           return -1;
+       }
+       free(node->address);
+       free(node);
+       node = dequeue_ack_queue(q);
+    }
+    free(buf);
+    return 0;
+}
