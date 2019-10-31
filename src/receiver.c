@@ -26,6 +26,7 @@ int main(int argc, char* argv[]){
 
     struct pollfd pfd[1];
     ssize_t size;
+    pkt_t* pkt;
 
     while(1){
         pfd[0].fd = sfd;
@@ -35,23 +36,24 @@ int main(int argc, char* argv[]){
         if(pfd[0].revents & POLLIN){ //On a reçu un paquet donc il faut le traiter.
             size = recvfrom(sfd, firstBuffer, (size_t) MAX_PACKET_SIZE, 0, (struct sockaddr*) &src_addr, &length); //Cet appel permet de récupérer l'adresse du sender.
             //Regarder dans la table des adresses si on connaît cette adresse ci et déterminer ce qu'on fait avec les données.
-            pkt_t* pkt = pkt_new();
+            pkt = pkt_new();
             pkt_status_code err = pkt_decode(firstBuffer, size, pkt);
 
-            if(err != PKT_OK){
-                printf("err : %d\n", err);
+            if(err == PKT_OK){
+                addie = search_linked_list(senders, &src_addr, args.maxCo, args.format, &count, pkt_get_length(pkt));
             }
-
-            addie = search_linked_list(senders, &src_addr, args.maxCo, args.format, &count, pkt_get_length(pkt));
+            else
+                addie = NULL;
 
             if(addie == NULL){
-                if(pkt_get_length(pkt) == 0){
-                    pkt_t* ack = ackEncode((pkt_get_seqnum(pkt) + 1) % 256, pkt_get_timestamp(pkt), 1, 31);
-                    enqueue_ack_queue(ack, &src_addr, acks);
+                if(err == PKT_OK){
+                    if(pkt_get_length(pkt) == 0){
+                        pkt_t* ack = ackEncode((pkt_get_seqnum(pkt) + 1) % 256, pkt_get_timestamp(pkt), 1, 31);
+                        enqueue_ack_queue(ack, &src_addr, acks);
+                    }
                 }
-                else{
-                    ;
-                }
+                else
+                    pkt_del(pkt);
             }
             else{
                 status = pkt_verif(pkt, addie->last_ack, addie->window);
@@ -74,13 +76,10 @@ int main(int argc, char* argv[]){
 
                 else if(status == 3){
                     add(addie->buffer, pkt, addie->last_ack);
-                    //pkt_t* ack = ackEncode(addie->last_ack, pkt_get_timestamp(pkt), 1, (addie->window - addie->buffer->size));
-                    //enqueue(addie->acks, ack);
                 }
                 if(emptyBuffer(addie, acks) == 1){
                     remove_linked_list(senders, addie);
                 }
-                //pkt_del(pkt);
             }
         }
         if(pfd[0].revents & POLLOUT){ //Il y a de la place pour écrire sur le socket, c'est ici que l'on va envoyer les acks.

@@ -48,7 +48,7 @@ int add(ordered_ll * q, pkt_t *pkt, int lastAck){
     if(pkt==NULL){return -2;}
     int check_seqnum;
     int actual_seqnum;
-    node * new_node = create_node(NULL);
+    node * new_node = create_node(pkt);
     actual_seqnum = pkt_get_seqnum(pkt);
     if (lastAck > actual_seqnum){
         new_node->index = actual_seqnum + 256;
@@ -56,7 +56,6 @@ int add(ordered_ll * q, pkt_t *pkt, int lastAck){
     else{
         new_node->index = actual_seqnum;
     }
-    new_node->pkt = pkt;
     if (q->front == NULL){
         q->front = new_node;
         q->size++;

@@ -86,7 +86,6 @@ int pkt_verif(pkt_t *pkt, int last_ack, int window){
         return 3;
     }
     else{
-        fprintf(stderr,"Impossible to treat the sequence number\n");
         return -1;
     }
 }
